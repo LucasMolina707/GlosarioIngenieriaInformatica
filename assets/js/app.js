@@ -1,494 +1,537 @@
-// app.js
+/*
+=================================================================================================
+app.js - Lógica principal del Portal Académico
+Autor: [Tu Nombre]
+Fecha: [Fecha Actual]
+Descripción: Este script maneja la carga de datos, renderizado dinámico,
+             interacciones de usuario y accesibilidad del glosario.
+=================================================================================================
+*/
 
-/**
- * Módulo principal de la aplicación.
- * Este script maneja la carga de datos, el renderizado de la UI,
- * la lógica del glosario interactivo y los eventos del usuario.
- * Sigue una estructura modular simple para evitar variables globales.
- */
+// Patrón Módulo IIFE para encapsular el código
 (function() {
     'use strict';
 
-    // ==========================================================================
-    // 1. VARIABLES Y CACHE
-    // ==========================================================================
-    let glossaryData = []; // Cache para los datos del glosario
-    let currentSubjectId = null; // ID de la materia actualmente renderizada
+    // =====================================================================
+    // CACHE DE DATOS Y ELEMENTOS DEL DOM
+    // =====================================================================
+    let glossaryData = [];
+    let currentMateria = null;
 
-    const elements = {
-        subjectArea: document.getElementById('subject-area'),
-        subjectSearch: document.getElementById('subject-search'),
+    const DOMElements = {
+        dynamicContent: document.getElementById('dynamic-content'),
+        searchInput: document.getElementById('search-input'),
         autocompleteList: document.getElementById('autocomplete-list'),
-        cardModal: document.getElementById('card-modal'),
+        modal: document.getElementById('modal'),
         modalBody: document.getElementById('modal-body'),
-        modalCloseButton: document.querySelector('.modal__close-button')
+        modalCloseBtn: document.querySelector('.modal__close')
     };
 
-    const imageCache = {}; // Cache para imágenes precargadas
-
-    // ==========================================================================
-    // 2. UTILIDADES Y FUNCIONES AUXILIARES
-    // ==========================================================================
+    // =====================================================================
+    // UTILIDADES GENERALES
+    // =====================================================================
 
     /**
-     * Crea un elemento HTML con opciones de atributos y texto.
-     * @param {string} tag - El nombre de la etiqueta HTML a crear (ej. 'div', 'p').
-     * @param {object} [options={}] - Opciones para el elemento.
-     * @param {string} [options.className] - Clase CSS.
-     * @param {string} [options.id] - ID del elemento.
-     * @param {string} [options.textContent] - Texto a añadir.
-     * @param {object} [options.attributes] - Objeto de atributos a establecer.
-     * @param {HTMLElement[]} [options.children] - Array de elementos hijos.
-     * @returns {HTMLElement} El elemento creado.
+     * @description Crea un elemento HTML con opciones.
+     * @param {string} tag - El nombre de la etiqueta HTML a crear.
+     * @param {object} [options={}] - Objeto con atributos y contenido.
+     * @returns {HTMLElement} El elemento HTML creado.
      */
-    function createEl(tag, { className, id, textContent, attributes = {}, children = [] } = {}) {
+    const createEl = (tag, options = {}) => {
         const el = document.createElement(tag);
-        if (className) el.className = className;
-        if (id) el.id = id;
-        if (textContent) el.textContent = textContent;
-        for (const key in attributes) {
-            el.setAttribute(key, attributes[key]);
-        }
-        children.forEach(child => el.appendChild(child));
+        Object.entries(options).forEach(([key, value]) => {
+            if (key === 'textContent') {
+                el.textContent = value;
+            } else if (key === 'className') {
+                el.className = value;
+            } else if (key === 'children') {
+                value.forEach(child => el.appendChild(child));
+            } else if (key === 'dataset') {
+                Object.entries(value).forEach(([dataKey, dataValue]) => {
+                    el.dataset[dataKey] = dataValue;
+                });
+            } else {
+                el.setAttribute(key, value);
+            }
+        });
         return el;
-    }
+    };
 
     /**
-     * Copia texto al portapapeles.
-     * @param {string} text - El texto a copiar.
+     * @description Implementa un debounce para limitar la frecuencia de llamadas a una función.
+     * @param {function} fn - La función a ejecutar.
+     * @param {number} ms - El tiempo en milisegundos para esperar.
+     * @returns {function} La función "debounced".
      */
-    async function clipboardCopy(text) {
+    const debounce = (fn, ms) => {
+        let timeout;
+        return function(...args) {
+            clearTimeout(timeout);
+            timeout = setTimeout(() => fn.apply(this, args), ms);
+        };
+    };
+
+    /**
+     * @description Copia texto al portapapeles.
+     * @param {string} text - El texto a copiar.
+     * @returns {Promise<void>}
+     */
+    const clipboardCopy = async (text) => {
         try {
             await navigator.clipboard.writeText(text);
-            console.log('Texto copiado al portapapeles:', text);
+            console.log('Texto copiado al portapapeles');
+            alert('Texto copiado al portapapeles.');
         } catch (err) {
-            console.error('Error al copiar texto: ', err);
+            console.error('Error al copiar el texto:', err);
+            alert('Error: No se pudo copiar el texto.');
         }
-    }
+    };
 
     /**
-     * Debounce para limitar la frecuencia de ejecución de una función.
-     * Útil para eventos de entrada como la búsqueda.
-     * @param {function} fn - La función a ejecutar.
-     * @param {number} ms - El tiempo de espera en milisegundos.
-     * @returns {function} La función con debounce.
+     * @description Verifica la existencia de una imagen o usa un fallback.
+     * @param {string} path - La ruta de la imagen original.
+     * @returns {string} La ruta de la imagen o el placeholder si no existe.
      */
-    function debounce(fn, ms) {
-        let timer;
-        return (...args) => {
-            clearTimeout(timer);
-            timer = setTimeout(() => fn.apply(this, args), ms);
-        };
-    }
+    const safeImageUrl = (path) => {
+        // En un entorno de producción, esta función podría verificar la existencia del archivo.
+        // Por ahora, asumimos que el path es correcto o usamos un placeholder.
+        const basePath = 'assets/images/';
+        const ext = path.split('.').pop();
+        const webpPath = path.replace(`.${ext}`, '.webp');
+        // Lógica simple: Si existe el webp, lo usamos.
+        // En un entorno real se haria una peticion HEAD para verificar.
+        return `${basePath}${path}`; // Por simplicidad, usamos la ruta base.
+    };
 
     /**
-     * Valida si una URL de imagen existe antes de usarla.
-     * @param {string} path - La ruta de la imagen.
-     * @returns {Promise<string>} La ruta de la imagen si existe, o una ruta de fallback.
+     * @description Actualiza los metadatos de la página para SEO y Open Graph.
+     * @param {object} metaData - Objeto con los nuevos metadatos.
      */
-    async function safeImageUrl(path) {
-        // Devuelve la ruta cacheadada si ya fue validada
-        if (imageCache[path] !== undefined) {
-            return imageCache[path];
-        }
+    const updatePageMetadata = (metaData) => {
+        document.title = metaData.title;
+        document.querySelector('meta[name="description"]').setAttribute('content', metaData.description);
+        document.querySelector('meta[property="og:title"]').setAttribute('content', metaData.title);
+        document.querySelector('meta[property="og:description"]').setAttribute('content', metaData.description);
+        document.querySelector('meta[name="twitter:title"]').setAttribute('content', metaData.title);
+        document.querySelector('meta[name="twitter:description"]').setAttribute('content', metaData.description);
+    };
 
-        const placeholder = 'assets/images/placeholder.png';
-        try {
-            const response = await fetch(path, { method: 'HEAD' });
-            if (response.ok) {
-                imageCache[path] = path;
-                return path;
-            }
-        } catch (error) {
-            // Ignorar errores, simplemente usamos el placeholder
-        }
-        imageCache[path] = placeholder;
-        return placeholder;
-    }
-
-    // ==========================================================================
-    // 3. CARGA DE DATOS Y PRECARGA
-    // ==========================================================================
+    // =====================================================================
+    // LÓGICA DE CARGA DE DATOS
+    // =====================================================================
 
     /**
-     * Carga el archivo glossary.json.
-     * @returns {Promise<object[]>} Los datos del glosario.
+     * @description Carga el archivo JSON del glosario.
      */
-    async function loadData() {
+    const loadData = async () => {
         try {
             const response = await fetch('data/glossary.json');
             if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+                throw new Error('No se pudo cargar glossary.json');
             }
-            const data = await response.json();
-            glossaryData = data; // Caching de los datos
-            return data;
+            glossaryData = await response.json();
+            console.log('Datos del glosario cargados correctamente.');
+            attachAutocomplete();
         } catch (error) {
-            console.error('Error al cargar los datos del glosario:', error);
-            elements.subjectArea.innerHTML = `<p class="error-message">Error al cargar el contenido. Por favor, inténtelo de nuevo más tarde.</p>`;
-            return [];
+            console.error('Error al cargar los datos:', error);
+            DOMElements.dynamicContent.innerHTML = `<p>Error al cargar el contenido. Por favor, revisa la consola para más detalles.</p>`;
         }
-    }
+    };
+
+    // =====================================================================
+    // LÓGICA DE RENDERIZADO
+    // =====================================================================
 
     /**
-     * Precarga las imágenes para evitar parpadeos al voltear las tarjetas.
-     * @param {string[]} imagePaths - Un array de rutas de imágenes.
+     * @description Renderiza una tarjeta del glosario.
+     * @param {object} card - El objeto de la tarjeta.
+     * @param {string} slug - El slug de la materia para la ruta de la imagen.
+     * @returns {HTMLElement} El elemento HTML de la tarjeta.
      */
-    function preloadImages(imagePaths) {
-        imagePaths.forEach(path => {
-            if (!imageCache[path]) {
-                const img = new Image();
-                img.src = path;
-                imageCache[path] = path; // Marcar como precargada
+    const renderCard = (card, slug) => {
+        const cardEl = createEl('div', { className: 'card', tabIndex: 0 });
+        
+        const cardFront = createEl('div', { className: 'card-face card-front' });
+        cardFront.innerHTML = `
+            <h4 class="card-front__word">${card.es}</h4>
+            <img class="card-front__thumbnail" src="assets/images/${card.img}" alt="${card.es}">
+            <div class="card__controls">
+                <button class="card__btn js-flip-btn" aria-label="Girar tarjeta">Girar</button>
+                <button class="card__btn js-expand-btn" aria-label="Ampliar información">Ampliar</button>
+            </div>
+        `;
+
+        const cardBack = createEl('div', { className: 'card-face card-back' });
+        cardBack.innerHTML = `
+            <h4 class="card-back__word">${card.en}</h4>
+            <img class="card-back__image" src="assets/images/${card.img}" alt="${card.es}">
+            <p class="card-back__def-es">${card.def_es}</p>
+            <p class="card-back__def-en">${card.def_en}</p>
+            <div class="card__controls">
+                <button class="card__btn js-flip-btn" aria-label="Girar de nuevo">Girar</button>
+                <button class="card__btn js-expand-btn" aria-label="Ampliar información">Ampliar</button>
+            </div>
+        `;
+        
+        cardEl.appendChild(cardFront);
+        cardEl.appendChild(cardBack);
+
+        // Almacenar datos para acceso rápido
+        cardEl.dataset.cardData = JSON.stringify(card);
+
+        return cardEl;
+    };
+
+    /**
+     * @description Renderiza un grupo de tarjetas.
+     * @param {object} group - El objeto del grupo.
+     * @param {string} slug - El slug de la materia.
+     * @returns {HTMLElement} El elemento HTML del grupo.
+     */
+    const renderGroup = (group, slug) => {
+        const groupSection = createEl('section', { className: 'group-section' });
+        
+        const header = createEl('div', { className: 'group-section__header' });
+        header.innerHTML = `<h3>${group.title}</h3><span>Grupo: ${group.members.join(', ')}</span>`;
+        
+        const cardsContainer = createEl('div', { className: 'group-section__cards' });
+        group.cards.forEach(card => cardsContainer.appendChild(renderCard(card, slug)));
+        
+        groupSection.appendChild(header);
+        groupSection.appendChild(cardsContainer);
+        
+        return groupSection;
+    };
+
+    /**
+     * @description Renderiza el contenido de una ventana (tab).
+     * @param {object} windowData - El objeto de la ventana.
+     * @param {object} materiaData - El objeto de la materia.
+     * @returns {HTMLElement} El elemento HTML de la ventana.
+     */
+    const renderWindow = (windowData, materiaData) => {
+        const windowEl = createEl('div', {
+            id: `window-${windowData.id}`,
+            className: 'materia__tab-content',
+            role: 'tabpanel'
+        });
+        
+        windowData.groups.forEach(groupId => {
+            const group = materiaData.groups.find(g => g.id === groupId);
+            if (group) {
+                windowEl.appendChild(renderGroup(group, materiaData.id));
             }
         });
-    }
-
-
-    // ==========================================================================
-    // 4. RENDERIZADO DE LA UI
-    // ==========================================================================
+        
+        return windowEl;
+    };
 
     /**
-     * Renderiza la plantilla completa para una materia.
-     * @param {string} subjectId - El ID de la materia a renderizar.
+     * @description Renderiza la plantilla completa de una materia.
+     * @param {string} materiaId - El ID de la materia a renderizar.
      */
-    function renderMateria(subjectId) {
-        const subject = glossaryData.find(s => s.id === subjectId);
-        if (!subject) {
-            console.error('Materia no encontrada:', subjectId);
+    const renderMateria = (materiaId) => {
+        const materia = glossaryData.find(m => m.id === materiaId);
+        if (!materia) {
+            console.error('Materia no encontrada:', materiaId);
+            DOMElements.dynamicContent.innerHTML = `<p>Lo sentimos, la materia no fue encontrada.</p>`;
             return;
         }
 
-        currentSubjectId = subjectId;
-        elements.subjectArea.innerHTML = ''; // Limpia el área de contenido
-
-        const subjectContainer = createEl('div', { className: 'subject' });
-
-        // 1. Cabecera de la materia
-        const header = createEl('div', { className: 'subject__header' });
-        header.appendChild(createEl('h2', { className: 'subject__title', textContent: `${subject.code} - ${subject.title}` }));
-        if (subject.description) {
-            header.appendChild(createEl('p', { className: 'subject__description', textContent: subject.description }));
-        }
-        subjectContainer.appendChild(header);
-
-        // 2. Grupos de tarjetas
-        const groupsContainer = createEl('div', { className: 'groups-container' });
-        subject.groups.forEach(group => {
-            groupsContainer.appendChild(renderGroup(group));
-        });
-        subjectContainer.appendChild(groupsContainer);
-
-        elements.subjectArea.appendChild(subjectContainer);
-    }
-
-    /**
-     * Renderiza un grupo de tarjetas.
-     * @param {object} group - El objeto del grupo.
-     * @returns {HTMLElement} El elemento del grupo.
-     */
-    function renderGroup(group) {
-        const groupEl = createEl('section', { className: 'group', id: group.id });
-        groupEl.appendChild(createEl('h3', { className: 'group__title', textContent: group.title }));
-        
-        // Renderiza los miembros del grupo
-        if (group.members && group.members.length > 0) {
-            const membersList = createEl('p', { textContent: `Miembros: ${group.members.join(', ')}`, className: 'group__members' });
-            groupEl.appendChild(membersList);
-        }
-
-        const cardsGrid = createEl('div', { className: 'cards-grid' });
-        group.cards.forEach(card => {
-            cardsGrid.appendChild(renderCard(card));
+        currentMateria = materia;
+        DOMElements.dynamicContent.innerHTML = '';
+        updatePageMetadata({
+            title: `${materia.title} | Portal Académico`,
+            description: materia.description
         });
 
-        groupEl.appendChild(cardsGrid);
-        return groupEl;
-    }
+        const materiaContainer = createEl('div', { className: 'materia-container' });
 
-    /**
-     * Renderiza una tarjeta individual.
-     * @param {object} cardData - Los datos de la tarjeta.
-     * @returns {HTMLElement} El elemento de la tarjeta.
-     */
-    function renderCard(cardData) {
-        const cardEl = createEl('div', { className: 'card', attributes: { 'tabindex': '0', 'role': 'button', 'aria-label': `Tarjeta de ${cardData.es}` } });
-        const inner = createEl('div', { className: 'card__inner' });
+        const header = createEl('header', { className: 'materia-header' });
+        header.innerHTML = `
+            <h1>${materia.code} - ${materia.title}</h1>
+            <p>${materia.description}</p>
+        `;
+        materiaContainer.appendChild(header);
 
-        // Cara frontal (Front Face)
-        const front = createEl('div', { className: 'card__face card__face--front' });
-        const wordFront = createEl('h4', { className: 'card__word', textContent: cardData.es });
-        const imageFront = createEl('img', { 
-            className: 'card__image',
-            attributes: { 
-                'src': `assets/images/${cardData.img}`,
-                'alt': cardData.es 
-            }
-        });
-        safeImageUrl(imageFront.src).then(url => imageFront.src = url);
-        front.appendChild(wordFront);
-        front.appendChild(imageFront);
-        inner.appendChild(front);
-
-        // Cara trasera (Back Face)
-        const back = createEl('div', { className: 'card__face card__face--back' });
-        const wordBack = createEl('h4', { className: 'card__word', textContent: cardData.en });
-        const defEs = createEl('p', { className: 'card__definition', textContent: `ES: ${cardData.def_es}` });
-        const defEn = createEl('p', { className: 'card__definition', textContent: `EN: ${cardData.def_en}` });
-        const actions = createEl('div', { className: 'card__actions' });
-        const expandBtn = createEl('button', {
-            className: 'card__button',
-            textContent: 'Expandir',
-            attributes: { 'aria-label': `Expandir la tarjeta de ${cardData.es}` }
-        });
-        actions.appendChild(expandBtn);
-        back.appendChild(wordBack);
-        back.appendChild(defEs);
-        back.appendChild(defEn);
-        back.appendChild(actions);
-        inner.appendChild(back);
-
-        cardEl.appendChild(inner);
-
-        // Manejadores de eventos para la tarjeta
-        cardEl.addEventListener('click', () => handleFlip(cardEl));
-        expandBtn.addEventListener('click', (e) => {
-            e.stopPropagation(); // Evita que el clic se propague al flip
-            handleExpand(cardData);
-        });
-
-        return cardEl;
-    }
-
-    /**
-     * Renderiza el contenido del modal expandido.
-     * @param {object} cardData - Los datos de la tarjeta.
-     */
-    async function renderModalContent(cardData) {
-        elements.modalBody.innerHTML = '';
-        
-        const modalImage = createEl('img', {
-            className: 'modal__image',
-            attributes: {
-                'src': `assets/images/${cardData.img}`,
-                'alt': `Imagen para la palabra ${cardData.es}`
-            }
-        });
-        // Usar la función de URL segura para el modal también
-        modalImage.src = await safeImageUrl(modalImage.src);
-
-        const wordEs = createEl('p', { className: 'modal__word-es', textContent: `ES: ${cardData.es}` });
-        const wordEn = createEl('p', { className: 'modal__word-en', textContent: `EN: ${cardData.en}` });
-        const defEs = createEl('p', { className: 'modal__definition-es', textContent: cardData.def_es });
-        const defEn = createEl('p', { className: 'modal__definition-en', textContent: cardData.def_en });
-
-        const actions = createEl('div', { className: 'modal__actions' });
-        const copyEsBtn = createEl('button', {
-            className: 'card__button',
-            textContent: 'Copiar ES',
-            attributes: { 'aria-label': `Copiar palabra y definición en español` }
-        });
-        const copyEnBtn = createEl('button', {
-            className: 'card__button',
-            textContent: 'Copiar EN',
-            attributes: { 'aria-label': `Copiar palabra y definición en inglés` }
-        });
-        // Placeholder para el botón de pronunciación
-        const ttsBtn = createEl('button', {
-            className: 'card__button',
-            textContent: 'Pronunciar',
-            attributes: { 'aria-label': `Pronunciar palabra en ambos idiomas` }
-        });
-
-        actions.appendChild(copyEsBtn);
-        actions.appendChild(copyEnBtn);
-        actions.appendChild(ttsBtn);
-
-        elements.modalBody.appendChild(modalImage);
-        elements.modalBody.appendChild(wordEs);
-        elements.modalBody.appendChild(wordEn);
-        elements.modalBody.appendChild(defEs);
-        elements.modalBody.appendChild(defEn);
-        elements.modalBody.appendChild(actions);
-
-        // Eventos de los botones del modal
-        copyEsBtn.addEventListener('click', () => clipboardCopy(`${cardData.es}: ${cardData.def_es}`));
-        copyEnBtn.addEventListener('click', () => clipboardCopy(`${cardData.en}: ${cardData.def_en}`));
-        ttsBtn.addEventListener('click', () => {
-            // Implementación futura con Web Speech API
-            console.log('Pronunciación no implementada.');
-        });
-    }
-
-
-    // ==========================================================================
-    // 5. MANEJADORES DE EVENTOS
-    // ==========================================================================
-
-    /**
-     * Maneja el evento de voltear una tarjeta.
-     * @param {HTMLElement} cardEl - El elemento de la tarjeta.
-     */
-    function handleFlip(cardEl) {
-        cardEl.classList.toggle('card--flipped');
-    }
-
-    /**
-     * Maneja la apertura del modal.
-     * @param {object} cardData - Los datos de la tarjeta a mostrar.
-     */
-    function handleExpand(cardData) {
-        renderModalContent(cardData);
-        elements.cardModal.classList.add('modal--visible');
-        elements.cardModal.removeAttribute('hidden');
-        elements.cardModal.focus(); // Mover el foco al modal para accesibilidad
-    }
-
-    /**
-     * Maneja el cierre del modal.
-     */
-    function handleModalClose() {
-        elements.cardModal.classList.remove('modal--visible');
-        elements.cardModal.setAttribute('hidden', '');
-    }
-
-    /**
-     * Inicializa la funcionalidad de autocompletado.
-     */
-    function attachAutocomplete() {
-        const input = elements.subjectSearch;
-        const list = elements.autocompleteList;
-
-        const handleSearch = debounce(() => {
-            const query = input.value.toLowerCase();
-            list.innerHTML = ''; // Limpia la lista
-
-            if (query.length === 0) {
-                list.setAttribute('hidden', '');
-                return;
-            }
-
-            const results = [];
-            glossaryData.forEach(subject => {
-                // Búsqueda por título de materia
-                if (subject.title.toLowerCase().includes(query) || subject.code.toLowerCase().includes(query)) {
-                    results.push({ type: 'subject', data: subject });
-                }
-                
-                // Búsqueda en grupos y tarjetas
-                subject.groups.forEach(group => {
-                    if (group.title.toLowerCase().includes(query)) {
-                        results.push({ type: 'group', data: group, subjectId: subject.id });
-                    }
-                    group.cards.forEach(card => {
-                        if (card.es.toLowerCase().includes(query) || card.en.toLowerCase().includes(query)) {
-                            results.push({ type: 'card', data: card, subjectId: subject.id, groupId: group.id });
-                        }
-                    });
-                });
-            });
+        if (materia.windows && materia.windows.length > 0) {
+            const tabsContainer = createEl('div', { className: 'materia__tabs', role: 'tablist' });
+            const windowsContainer = createEl('div', { className: 'materia__windows' });
             
-            // Eliminar duplicados
-            const uniqueResults = [...new Map(results.map(item => [JSON.stringify(item), item])).values()];
-
-            if (uniqueResults.length > 0) {
-                uniqueResults.forEach(item => {
-                    const listItem = createEl('li', {
-                        className: 'autocomplete__item',
-                        attributes: { 'role': 'option' },
-                        textContent: item.data.title || item.data.es || item.data.en
-                    });
-                    
-                    listItem.addEventListener('click', () => {
-                        input.value = item.data.title || item.data.es || item.data.en;
-                        list.setAttribute('hidden', '');
-                        if (item.type === 'subject' && item.data.id) {
-                            renderMateria(item.data.id);
-                        } else if (item.subjectId) {
-                            // Si es un grupo o tarjeta, renderizar la materia y hacer scroll
-                            renderMateria(item.subjectId);
-                            setTimeout(() => {
-                                const target = document.getElementById(item.groupId || item.data.id);
-                                if (target) {
-                                    target.scrollIntoView({ behavior: 'smooth' });
-                                }
-                            }, 50); // Pequeño delay para asegurar que el elemento existe
-                        }
-                    });
-                    list.appendChild(listItem);
+            materia.windows.forEach((windowData, index) => {
+                const tabBtn = createEl('button', {
+                    className: 'materia__tab-button',
+                    role: 'tab',
+                    id: `tab-${windowData.id}`,
+                    'aria-controls': `window-${windowData.id}`,
+                    'aria-selected': index === 0 ? 'true' : 'false',
+                    textContent: windowData.title
                 });
-                list.removeAttribute('hidden');
-                input.setAttribute('aria-expanded', 'true');
-            } else {
-                list.setAttribute('hidden', '');
-                input.setAttribute('aria-expanded', 'false');
-            }
-        }, 300); // 300ms de debounce
-
-        input.addEventListener('input', handleSearch);
-        input.addEventListener('focus', handleSearch); // Muestra la lista al enfocar
-        
-        // Manejo del teclado para accesibilidad
-        input.addEventListener('keydown', (e) => {
-            const items = list.querySelectorAll('.autocomplete__item:not([hidden])');
-            if (items.length === 0) return;
-
-            let activeIndex = [...items].findIndex(item => item.classList.contains('autocomplete__item--active'));
-
-            if (e.key === 'ArrowDown') {
-                e.preventDefault();
-                activeIndex = (activeIndex + 1) % items.length;
-            } else if (e.key === 'ArrowUp') {
-                e.preventDefault();
-                activeIndex = (activeIndex - 1 + items.length) % items.length;
-            } else if (e.key === 'Enter') {
-                e.preventDefault();
-                items[activeIndex]?.click();
-                return;
-            }
-
-            items.forEach((item, index) => {
-                item.classList.toggle('autocomplete__item--active', index === activeIndex);
-                item.setAttribute('aria-selected', index === activeIndex ? 'true' : 'false');
+                tabsContainer.appendChild(tabBtn);
+                windowsContainer.appendChild(renderWindow(windowData, materia));
             });
-            input.setAttribute('aria-activedescendant', items[activeIndex]?.id || '');
-        });
 
-        // Cierra la lista al hacer clic fuera
-        document.addEventListener('click', (e) => {
-            if (!elements.subjectSearch.contains(e.target) && !elements.autocompleteList.contains(e.target)) {
-                elements.autocompleteList.setAttribute('hidden', '');
-                elements.subjectSearch.setAttribute('aria-expanded', 'false');
+            materiaContainer.appendChild(tabsContainer);
+            materiaContainer.appendChild(windowsContainer);
+
+            attachTabEvents(tabsContainer, windowsContainer);
+            windowsContainer.querySelector('.materia__tab-content').setAttribute('aria-hidden', 'false');
+
+        } else {
+            // Si no hay 'windows', renderizar todos los grupos directamente
+            materia.groups.forEach(group => {
+                materiaContainer.appendChild(renderGroup(group, materia.id));
+            });
+        }
+        
+        DOMElements.dynamicContent.appendChild(materiaContainer);
+        attachCardEvents();
+    };
+
+    // =====================================================================
+    // MANEJADORES DE EVENTOS
+    // =====================================================================
+
+    /**
+     * @description Maneja los eventos de click para voltear y expandir tarjetas.
+     */
+    const attachCardEvents = () => {
+        document.querySelectorAll('.card').forEach(card => {
+            card.addEventListener('click', (e) => {
+                const flipBtn = e.target.closest('.js-flip-btn');
+                const expandBtn = e.target.closest('.js-expand-btn');
+
+                if (flipBtn) {
+                    card.classList.toggle('card--flipped');
+                } else if (expandBtn) {
+                    const cardData = JSON.parse(card.dataset.cardData);
+                    showModal(cardData);
+                } else if (e.target.closest('.card-face')) {
+                    // Click en cualquier parte de la cara, excepto en los botones
+                    card.classList.toggle('card--flipped');
+                }
+            });
+
+            // Manejar Enter/Space para accesibilidad
+            card.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    if (document.activeElement === card) {
+                        card.classList.toggle('card--flipped');
+                    } else if (e.target.classList.contains('js-expand-btn')) {
+                        const cardData = JSON.parse(card.dataset.cardData);
+                        showModal(cardData);
+                    }
+                }
+            });
+        });
+    };
+
+    /**
+     * @description Maneja los eventos de los tabs.
+     * @param {HTMLElement} tabsContainer - El contenedor de los botones de tabs.
+     * @param {HTMLElement} windowsContainer - El contenedor de los paneles de tabs.
+     */
+    const attachTabEvents = (tabsContainer, windowsContainer) => {
+        tabsContainer.addEventListener('click', (e) => {
+            const tabBtn = e.target.closest('.materia__tab-button');
+            if (tabBtn) {
+                const targetId = tabBtn.getAttribute('aria-controls');
+                
+                tabsContainer.querySelectorAll('.materia__tab-button').forEach(btn => btn.setAttribute('aria-selected', 'false'));
+                windowsContainer.querySelectorAll('.materia__tab-content').forEach(win => win.setAttribute('aria-hidden', 'true'));
+                
+                tabBtn.setAttribute('aria-selected', 'true');
+                document.getElementById(targetId).setAttribute('aria-hidden', 'false');
             }
         });
-    }
+    };
 
-    // ==========================================================================
-    // 6. INICIALIZACIÓN
-    // ==========================================================================
-    async function init() {
-        // Cargar los datos al inicio
-        await loadData();
+    /**
+     * @description Muestra el modal con la información de la tarjeta.
+     * @param {object} card - El objeto de la tarjeta a mostrar.
+     */
+    const showModal = (card) => {
+        DOMElements.modalBody.innerHTML = `
+            <img class="modal-body__img" src="assets/images/${card.img}" alt="${card.es}">
+            <h3 class="modal-body__word-es">${card.es}</h3>
+            <h4 class="modal-body__word-en">${card.en}</h4>
+            <div class="modal-body__def">
+                <p><strong>Español:</strong> ${card.def_es}</p>
+                <p><strong>English:</strong> ${card.def_en}</p>
+            </div>
+            <div class="modal-body__controls">
+                <button class="modal-body__btn js-copy-es">Copiar ES</button>
+                <button class="modal-body__btn js-copy-en">Copiar EN</button>
+                <button class="modal-body__btn js-speak" aria-label="Pronunciar en español">🔊 ES</button>
+                <button class="modal-body__btn js-speak-en" aria-label="Pronunciar en inglés">🔊 EN</button>
+            </div>
+        `;
 
-        // Inicializar la funcionalidad de autocompletado
-        attachAutocomplete();
+        DOMElements.modal.classList.add('modal--open');
+        DOMElements.modal.focus();
         
-        // Cargar por defecto la primera materia si existe
-        if (glossaryData.length > 0) {
-            renderMateria(glossaryData[0].id);
+        // Manejar eventos del modal
+        document.querySelector('.js-copy-es').addEventListener('click', () => clipboardCopy(card.def_es));
+        document.querySelector('.js-copy-en').addEventListener('click', () => clipboardCopy(card.def_en));
+        
+        // Placeholder para Web Speech API
+        document.querySelector('.js-speak').addEventListener('click', () => alert('Funcionalidad de pronunciación en desarrollo.'));
+        document.querySelector('.js-speak-en').addEventListener('click', () => alert('Funcionalidad de pronunciación en desarrollo.'));
+    };
+
+    /**
+     * @description Oculta el modal.
+     */
+    const hideModal = () => {
+        DOMElements.modal.classList.remove('modal--open');
+    };
+    
+    // =====================================================================
+    // LÓGICA DE BÚSQUEDA Y AUTOCOMPLETE
+    // =====================================================================
+
+    /**
+     * @description Filtra los datos del glosario según el término de búsqueda.
+     * @param {string} query - El término de búsqueda.
+     * @returns {array} Un array de resultados.
+     */
+    const searchGlossary = (query) => {
+        const lowerQuery = query.toLowerCase();
+        const results = [];
+        
+        glossaryData.forEach(materia => {
+            // Búsqueda por materia
+            if (materia.code.toLowerCase().includes(lowerQuery) || materia.title.toLowerCase().includes(lowerQuery)) {
+                results.push({
+                    type: 'materia',
+                    id: materia.id,
+                    text: `${materia.code} - ${materia.title}`
+                });
+            }
+            
+            // Búsqueda en grupos y tarjetas
+            materia.groups.forEach(group => {
+                if (group.title.toLowerCase().includes(lowerQuery)) {
+                    results.push({
+                        type: 'grupo',
+                        id: materia.id,
+                        text: `Grupo: "${group.title}" en ${materia.code}`
+                    });
+                }
+                group.cards.forEach(card => {
+                    if (card.es.toLowerCase().includes(lowerQuery) || card.en.toLowerCase().includes(lowerQuery)) {
+                        results.push({
+                            type: 'tarjeta',
+                            id: materia.id,
+                            text: `Término: "${card.es}" en ${materia.code}`
+                        });
+                    }
+                });
+            });
+        });
+        
+        // Limitar a los 10 primeros resultados para no saturar la UI
+        return results.slice(0, 10);
+    };
+
+    /**
+     * @description Actualiza la lista de autocomplete.
+     * @param {array} results - El array de resultados de búsqueda.
+     */
+    const updateAutocompleteList = (results) => {
+        DOMElements.autocompleteList.innerHTML = '';
+        if (results.length === 0) {
+            DOMElements.autocompleteList.setAttribute('aria-expanded', 'false');
+            return;
         }
 
-        // Manejar el cierre del modal con el botón y la tecla Esc
-        elements.modalCloseButton.addEventListener('click', handleModalClose);
-        window.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && elements.cardModal.classList.contains('modal--visible')) {
-                handleModalClose();
+        DOMElements.autocompleteList.setAttribute('aria-expanded', 'true');
+        results.forEach((result, index) => {
+            const li = createEl('li', {
+                role: 'option',
+                id: `result-${index}`,
+                textContent: result.text,
+                'data-id': result.id
+            });
+            DOMElements.autocompleteList.appendChild(li);
+        });
+    };
+
+    /**
+     * @description Asocia los eventos de búsqueda y autocomplete.
+     */
+    const attachAutocomplete = () => {
+        const debouncedSearch = debounce((e) => {
+            const query = e.target.value.trim();
+            if (query.length > 2) {
+                const results = searchGlossary(query);
+                updateAutocompleteList(results);
+            } else {
+                updateAutocompleteList([]);
+            }
+        }, 300);
+
+        DOMElements.searchInput.addEventListener('input', debouncedSearch);
+
+        DOMElements.searchInput.addEventListener('focus', () => {
+            if (DOMElements.searchInput.value.length > 2) {
+                 const results = searchGlossary(DOMElements.searchInput.value);
+                 updateAutocompleteList(results);
             }
         });
-    }
 
-    // Ejecutar la función de inicialización cuando el DOM esté listo
+        DOMElements.searchInput.addEventListener('blur', (e) => {
+            // Retraso para permitir el click en la lista
+            setTimeout(() => {
+                DOMElements.autocompleteList.setAttribute('aria-expanded', 'false');
+            }, 200);
+        });
+
+        DOMElements.autocompleteList.addEventListener('mousedown', (e) => {
+            const listItem = e.target.closest('li');
+            if (listItem) {
+                const materiaId = listItem.dataset.id;
+                renderMateria(materiaId);
+                DOMElements.autocompleteList.setAttribute('aria-expanded', 'false');
+                DOMElements.searchInput.value = listItem.textContent;
+            }
+        });
+    };
+    
+    // =====================================================================
+    // INICIALIZACIÓN
+    // =====================================================================
+
+    /**
+     * @description Inicializa la aplicación.
+     */
+    const init = () => {
+        loadData();
+        
+        // Eventos del modal
+        DOMElements.modalCloseBtn.addEventListener('click', hideModal);
+        DOMEElements.modal.addEventListener('click', (e) => {
+            if (e.target === DOMElements.modal) {
+                hideModal();
+            }
+        });
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && DOMElements.modal.classList.contains('modal--open')) {
+                hideModal();
+            }
+        });
+        
+        // Manejar clics en los enlaces ancla
+        document.querySelectorAll('.main-header__nav a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                document.querySelector(link.getAttribute('href')).scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+    };
+
+    // Lanzar la inicialización cuando el DOM esté listo
     document.addEventListener('DOMContentLoaded', init);
 
-})(); // IIFE para encapsular el código
+})(); // Fin del Patrón Módulo
