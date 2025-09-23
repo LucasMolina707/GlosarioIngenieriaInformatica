@@ -1,94 +1,117 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <title>Portal Académico - Glosario Interactivo</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Portal académico y glosario interactivo de materias con términos clave para estudiantes.">
-    <link rel="canonical" href="https://tudominio.com/">
+
+    <title>Portal Académico | Glosario Interactivo</title>
+
+    <meta name="description" content="Un portal académico con glosarios interactivos para materias clave. Aprende términos y conceptos de forma visual y efectiva.">
+
+    <link rel="canonical" href="https://ejemplo.com/">
+
     <meta name="robots" content="index,follow">
 
+    <meta property="og:title" content="Portal Académico | Glosario Interactivo">
+    <meta property="og:description" content="Explora glosarios interactivos por materia con tarjetas de estudio, definiciones y más.">
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://tudominio.com/">
-    <meta property="og:title" content="Portal Académico - Glosario Interactivo">
-    <meta property="og:description" content="Portal académico y glosario interactivo de materias con términos clave para estudiantes.">
-    <meta property="og:image" content="assets/images/seo/cover.png">
+    <meta property="og:url" content="https://ejemplo.com/">
+    <meta property="og:image" content="https://ejemplo.com/assets/images/seo/cover.png">
 
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:url" content="https://tudominio.com/">
-    <meta name="twitter:title" content="Portal Académico - Glosario Interactivo">
-    <meta name="twitter:description" content="Portal académico y glosario interactivo de materias con términos clave para estudiantes.">
-    <meta name="twitter:image" content="assets/images/seo/cover.png">
+    <meta name="twitter:title" content="Portal Académico | Glosario Interactivo">
+    <meta name="twitter:description" content="Explora glosarios interactivos por materia con tarjetas de estudio, definiciones y más.">
+    <meta name="twitter:image" content="https://ejemplo.com/assets/images/seo/cover.png">
 
     <link rel="icon" href="assets/images/logo/favicon.ico" type="image/x-icon">
     <link rel="apple-touch-icon" href="assets/images/logo/logo.png">
 
     <link rel="stylesheet" href="assets/css/styles.css">
-    
-    </head>
-<body>
-    <div class="site-container">
 
-        <header class="main-header">
-            <div class="main-header__logo">
-                <a href="#intro" aria-label="Ir al inicio">
-                    <img src="assets/images/logo/logo.png" alt="Logo del Portal Académico" width="100">
-                </a>
+    <script src="assets/js/app.js" defer></script>
+</head>
+<body>
+
+    <header class="site-header">
+        <div class="container site-header__container">
+            <a href="/" class="site-header__logo">
+                <img src="assets/images/logo/logo.png" alt="Logo del Portal Académico">
+            </a>
+            
+            <div class="search-combobox" role="combobox" aria-expanded="false" aria-haspopup="listbox">
+                <input type="text" id="search-input" class="search-combobox__input" placeholder="Buscar materia, grupo o término..." aria-autocomplete="list" aria-controls="search-results">
+                <ul class="search-combobox__results" id="search-results" role="listbox">
+                    </ul>
+                <div id="search-live-region" class="visually-hidden" aria-live="polite" role="status"></div>
             </div>
-            <div class="main-header__search">
-                <label for="search-input" class="visually-hidden">Buscar en el glosario</label>
-                <div class="autocomplete-container" role="combobox" aria-haspopup="listbox" aria-expanded="false">
-                    <input type="text" id="search-input" placeholder="Buscar materia, término..." aria-autocomplete="list" aria-controls="autocomplete-list">
-                    <ul id="autocomplete-list" role="listbox"></ul>
-                </div>
-            </div>
-            <nav class="main-header__nav">
-                <a href="#intro">Inicio</a>
+            
+            <nav class="site-header__nav">
+                <a href="#intro">Introducción</a>
                 <a href="#objetivos">Objetivos</a>
                 <a href="#metodologia">Metodología</a>
             </nav>
-        </header>
+        </div>
+    </header>
 
-        <main class="main-content" id="dynamic-content">
-            <section id="intro" class="section">
-                <h1>Bienvenido al Portal Académico</h1>
-                <p>Este sitio es un recurso educativo para estudiantes, facilitando el acceso a glosarios interactivos por materia. Explora y aprende los conceptos clave de cada curso de manera visual y organizada.</p>
-            </section>
+    <main id="main-content" class="container">
 
-            <section id="objetivos" class="section">
-                <h2>Objetivos del Portal</h2>
-                <p>El objetivo general es servir como una herramienta de apoyo para el aprendizaje autónomo.</p>
+        <noscript>
+            <div class="no-script-warning">
+                <h2>Funcionalidad limitada</h2>
+                <p>Este sitio requiere JavaScript para su interactividad completa. Por favor, actívalo en tu navegador para usar el glosario dinámico.</p>
+                <p>A continuación, se muestra una lista estática de las materias disponibles:</p>
                 <ul>
-                    <li>**Facilitar la comprensión**: Proporcionar definiciones claras y concisas de términos académicos.</li>
-                    <li>**Apoyar el estudio**: Ofrecer un método interactivo de repaso a través de tarjetas y glosarios.</li>
-                    <li>**Mejorar la retención**: Usar elementos visuales y un formato de tarjeta para reforzar el conocimiento.</li>
-                    <li>**Promover la accesibilidad**: Asegurar que el contenido sea accesible a todos los usuarios, independientemente de sus capacidades.</li>
+                    <li>(N) 2093 Herramientas y Técnicas de Estudio</li>
+                    <li>(N) 2313 Sistemas Operativos I</li>
+                    <li>(N) 2480 Conceptos y métodos matemáticos</li>
+                    <li>(N) 2315 Fundamentos de programación</li>
+                    <li>CONOCE LA U (CAS) 2025-2</li>
                 </ul>
-            </section>
-
-            <section id="metodologia" class="section">
-                <h2>Protocolo Académico</h2>
-                <p>Nuestro protocolo se basa en una metodología sencilla para maximizar el aprendizaje:</p>
-                <ol>
-                    <li>**Exploración**: Navega por las materias usando el buscador o el menú de navegación.</li>
-                    <li>**Estudio**: Selecciona una materia y explora sus grupos de tarjetas.</li>
-                    <li>**Repaso**: Usa el botón "Girar" para ver la traducción y definición de cada término.</li>
-                    <li>**Profundización**: Utiliza el botón "Ampliar" para ver la información completa y copiar las definiciones.</li>
-                </ol>
-            </section>
-
-        </main>
-        
-        <div id="modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" aria-describedby="modal-content">
-            <div class="modal-content">
-                <button class="modal__close" aria-label="Cerrar ventana"></button>
-                <div id="modal-body" class="modal-body">
-                    </div>
             </div>
+        </noscript>
+
+        <section id="intro" class="content-section">
+            <h2>Introducción al Portal</h2>
+            <p>Este portal es una herramienta de apoyo académico diseñada para facilitar el estudio y la comprensión de términos clave en diversas materias. Utiliza un sistema de tarjetas interactivas (flashcards) para presentar conceptos, definiciones y traducciones de manera visual y organizada.</p>
+        </section>
+
+        <section id="objetivos" class="content-section">
+            <h2>Objetivos del Proyecto</h2>
+            <h3>Objetivo General</h3>
+            <p>Proveer un recurso educativo centralizado y fácil de usar que permita a los estudiantes repasar y consolidar su conocimiento a través de un glosario interactivo por materias.</p>
+            <h3>Objetivos Específicos</h3>
+            <ul>
+                <li>Facilitar el acceso rápido a definiciones y conceptos clave de cada materia.</li>
+                <li>Ofrecer una experiencia de usuario interactiva y atractiva que fomente el aprendizaje.</li>
+                <li>Centralizar el material de estudio en un formato digital, accesible y bien estructurado.</li>
+                <li>Implementar funcionalidades de búsqueda avanzada para una localización eficiente de la información.</li>
+            </ul>
+        </section>
+
+        <section id="metodologia" class="content-section">
+            <h2>Metodología (Protocolo Académico)</h2>
+            <p>El contenido de este portal se organiza jerárquicamente: <strong>Materias → Ventanas → Grupos → Tarjetas</strong>.</p>
+            <ol>
+                <li><strong>Selección de Materia:</strong> Elige una materia del menú principal o utiliza el buscador.</li>
+                <li><strong>Navegación por Ventanas:</strong> Dentro de cada materia, el contenido puede estar segmentado en "ventanas" o pestañas temáticas.</li>
+                <li><strong>Exploración de Grupos:</strong> Cada ventana contiene grupos de estudio, que agrupan tarjetas relacionadas.</li>
+                <li><strong>Interacción con Tarjetas:</strong> Cada tarjeta presenta un término. Puedes girarla para ver su traducción y definiciones, o ampliarla para acceder a más detalles y herramientas como copiar el texto al portapapeles.</li>
+            </ol>
+        </section>
+
+        <div id="dynamic-content-area">
+            <p class="placeholder-text">Selecciona una materia usando el buscador para comenzar.</p>
         </div>
 
+    </main>
+    
+    <div id="card-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" hidden>
+        <div class="modal__overlay" tabindex="-1"></div>
+        <div class="modal__content">
+            <button id="modal-close-btn" class="modal__close-btn" aria-label="Cerrar ventana">&times;</button>
+            <div id="modal-body">
+                </div>
+        </div>
     </div>
-
-    <script src="assets/js/app.js"></script>
 </body>
 </html>
