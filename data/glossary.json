@@ -1,0 +1,352 @@
+[
+  {
+    "id": "2093_Herramientas",
+    "code": "2093",
+    "title": "Herramientas y Técnicas de Estudio",
+    "description": "Esta materia introduce los conceptos, herramientas y métodos fundamentales para optimizar el proceso de aprendizaje y la gestión del tiempo.",
+    "groups": [
+      {
+        "id": "g1_h_tecnicas",
+        "title": "Técnicas de Lectura y Comprensión",
+        "members": ["Sofía", "Juan"],
+        "cards": [
+          {
+            "id": "m1",
+            "es": "Lectura rápida",
+            "en": "Speed reading",
+            "def_es": "Técnica que busca aumentar la velocidad de lectura sin sacrificar la comprensión del texto.",
+            "def_en": "A technique designed to increase reading speed without sacrificing text comprehension.",
+            "img": "2093_Herramientas/m1.png"
+          },
+          {
+            "id": "m2",
+            "es": "Subrayado",
+            "en": "Underlining",
+            "def_es": "Acción de marcar las ideas principales de un texto con una línea para destacarlas y facilitar su memorización.",
+            "def_en": "The act of marking the main ideas of a text with a line to highlight them and facilitate memorization.",
+            "img": "2093_Herramientas/m2.png"
+          },
+          {
+            "id": "m3",
+            "es": "Esquema",
+            "en": "Outline",
+            "def_es": "Representación gráfica y jerarquizada de las ideas de un texto, que facilita la comprensión y el repaso.",
+            "def_en": "A graphical and hierarchical representation of the ideas in a text, which facilitates comprehension and review.",
+            "img": "2093_Herramientas/m3.png"
+          }
+        ]
+      },
+      {
+        "id": "g2_h_gestion",
+        "title": "Gestión del Tiempo y Organización",
+        "members": ["Ana", "Luis"],
+        "cards": [
+          {
+            "id": "m4",
+            "es": "Calendario",
+            "en": "Calendar",
+            "def_es": "Herramienta que organiza actividades y eventos en el tiempo, esencial para la planificación académica.",
+            "def_en": "A tool that organizes activities and events over time, essential for academic planning.",
+            "img": "2093_Herramientas/m4.png"
+          },
+          {
+            "id": "m5",
+            "es": "Agenda",
+            "en": "Planner",
+            "def_es": "Libreta o aplicación para registrar tareas, citas y plazos, ayudando a la gestión diaria.",
+            "def_en": "A notebook or application for recording tasks, appointments, and deadlines, helping with daily management.",
+            "img": "2093_Herramientas/m5.png"
+          },
+          {
+            "id": "m6",
+            "es": "Priorización",
+            "en": "Prioritization",
+            "def_es": "Proceso de ordenar tareas según su importancia y urgencia para maximizar la productividad.",
+            "def_en": "The process of ordering tasks by importance and urgency to maximize productivity.",
+            "img": "2093_Herramientas/m6.png"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "2313_SistemasOperativosI",
+    "code": "2313",
+    "title": "Sistemas Operativos I",
+    "description": "Exploración de los principios y la arquitectura de los sistemas operativos, incluyendo la gestión de procesos, memoria y archivos.",
+    "groups": [
+      {
+        "id": "g1_so_fundamentos",
+        "title": "Fundamentos y Arquitectura",
+        "members": ["Carlos", "María"],
+        "cards": [
+          {
+            "id": "m1",
+            "es": "Kernel",
+            "en": "Kernel",
+            "def_es": "El núcleo de un sistema operativo; gestiona los recursos del hardware y proporciona servicios a los procesos del usuario.",
+            "def_en": "The core of an operating system; it manages hardware resources and provides services to user processes.",
+            "img": "2313_SistemasOperativosI/m1.png"
+          },
+          {
+            "id": "m2",
+            "es": "Proceso",
+            "en": "Process",
+            "def_es": "Una instancia de un programa de computadora que está siendo ejecutado.",
+            "def_en": "An instance of a computer program that is being executed.",
+            "img": "2313_SistemasOperativosI/m2.png"
+          },
+          {
+            "id": "m3",
+            "es": "Multitarea",
+            "en": "Multitasking",
+            "def_es": "Capacidad de un sistema operativo para ejecutar múltiples procesos al mismo tiempo.",
+            "def_en": "The ability of an operating system to execute multiple processes at the same time.",
+            "img": "2313_SistemasOperativosI/m3.png"
+          }
+        ]
+      },
+      {
+        "id": "g2_so_memoria",
+        "title": "Gestión de Memoria",
+        "members": ["Pedro", "Laura"],
+        "cards": [
+          {
+            "id": "m4",
+            "es": "Memoria virtual",
+            "en": "Virtual memory",
+            "def_es": "Técnica que permite usar espacio en disco como si fuera RAM, ampliando la memoria disponible.",
+            "def_en": "A technique that allows using disk space as if it were RAM, expanding available memory.",
+            "img": "2313_SistemasOperativosI/m4.png"
+          },
+          {
+            "id": "m5",
+            "es": "Paginación",
+            "en": "Paging",
+            "def_es": "Método de gestión de memoria donde los programas se dividen en bloques de tamaño fijo llamados páginas.",
+            "def_en": "A memory management method where programs are divided into fixed-size blocks called pages.",
+            "img": "2313_SistemasOperativosI/m5.png"
+          },
+          {
+            "id": "m6",
+            "es": "Swapping",
+            "en": "Swapping",
+            "def_es": "Proceso de mover procesos de la memoria principal al disco duro para liberar espacio.",
+            "def_en": "The process of moving processes from main memory to the hard disk to free up space.",
+            "img": "2313_SistemasOperativosI/m6.png"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "2480_ConceptosMetodosMatematicos",
+    "code": "2480",
+    "title": "Conceptos y métodos matemáticos",
+    "description": "Fundamentos de la lógica matemática, álgebra y cálculo diferencial, esenciales para la resolución de problemas computacionales y de ingeniería.",
+    "groups": [
+      {
+        "id": "g1_m_logica",
+        "title": "Lógica Proposicional",
+        "members": ["Daniel", "Andrea"],
+        "cards": [
+          {
+            "id": "m1",
+            "es": "Proposición",
+            "en": "Proposition",
+            "def_es": "Una declaración que puede ser verdadera o falsa, pero no ambas a la vez.",
+            "def_en": "A statement that can be either true or false, but not both at the same time.",
+            "img": "2480_ConceptosMetodosMatematicos/m1.png"
+          },
+          {
+            "id": "m2",
+            "es": "Tabla de verdad",
+            "en": "Truth table",
+            "def_es": "Herramienta que muestra el valor de verdad de una proposición compuesta para todas las combinaciones de valores de sus variables.",
+            "def_en": "A tool that shows the truth value of a compound proposition for all combinations of its variables' values.",
+            "img": "2480_ConceptosMetodosMatematicos/m2.png"
+          },
+          {
+            "id": "m3",
+            "es": "Conjunción",
+            "en": "Conjunction",
+            "def_es": "Un operador lógico que resulta verdadero solo si todas las proposiciones conectadas son verdaderas (operador AND).",
+            "def_en": "A logical operator that is true only if all connected propositions are true (AND operator).",
+            "img": "2480_ConceptosMetodosMatematicos/m3.png"
+          }
+        ]
+      },
+      {
+        "id": "g2_m_calculo",
+        "title": "Cálculo Diferencial",
+        "members": ["David", "Sara"],
+        "cards": [
+          {
+            "id": "m4",
+            "es": "Derivada",
+            "en": "Derivative",
+            "def_es": "Una medida de cómo cambia una función a medida que su entrada cambia; la pendiente de la línea tangente a la curva.",
+            "def_en": "A measure of how a function changes as its input changes; the slope of the tangent line to the curve.",
+            "img": "2480_ConceptosMetodosMatematicos/m4.png"
+          },
+          {
+            "id": "m5",
+            "es": "Límite",
+            "en": "Limit",
+            "def_es": "El valor al que se acerca una función a medida que la entrada se aproxima a un valor específico.",
+            "def_en": "The value that a function approaches as the input approaches a specific value.",
+            "img": "2480_ConceptosMetodosMatematicos/m5.png"
+          },
+          {
+            "id": "m6",
+            "es": "Integral",
+            "en": "Integral",
+            "def_es": "Operación inversa de la derivada, usada para calcular el área bajo una curva.",
+            "def_en": "The inverse operation of the derivative, used to calculate the area under a curve.",
+            "img": "2480_ConceptosMetodosMatematicos/m6.png"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "2315_FundamentosProgramacion",
+    "code": "2315",
+    "title": "Fundamentos de programación",
+    "description": "Introducción a los principios básicos de la programación, abarcando estructuras de control, tipos de datos y algoritmos.",
+    "groups": [
+      {
+        "id": "g1_fp_basicos",
+        "title": "Conceptos Fundamentales",
+        "members": ["Kevin", "Camila"],
+        "cards": [
+          {
+            "id": "m1",
+            "es": "Algoritmo",
+            "en": "Algorithm",
+            "def_es": "Conjunto de instrucciones finitas y bien definidas para resolver un problema o realizar una tarea.",
+            "def_en": "A finite, well-defined set of instructions for solving a problem or performing a task.",
+            "img": "2315_FundamentosProgramacion/m1.png"
+          },
+          {
+            "id": "m2",
+            "es": "Variable",
+            "en": "Variable",
+            "def_es": "Un espacio de memoria reservado para almacenar un valor que puede cambiar durante la ejecución de un programa.",
+            "def_en": "A reserved memory location for storing a value that can change during a program's execution.",
+            "img": "2315_FundamentosProgramacion/m2.png"
+          },
+          {
+            "id": "m3",
+            "es": "Bucle",
+            "en": "Loop",
+            "def_es": "Una estructura de control que permite ejecutar un bloque de código repetidamente.",
+            "def_en": "A control structure that allows a block of code to be executed repeatedly.",
+            "img": "2315_FundamentosProgramacion/m3.png"
+          }
+        ]
+      },
+      {
+        "id": "g2_fp_estructuras",
+        "title": "Estructuras de Datos",
+        "members": ["Diego", "Natalia"],
+        "cards": [
+          {
+            "id": "m4",
+            "es": "Arreglo",
+            "en": "Array",
+            "def_es": "Una colección de elementos del mismo tipo de datos, almacenados en ubicaciones de memoria contiguas.",
+            "def_en": "A collection of elements of the same data type, stored in contiguous memory locations.",
+            "img": "2315_FundamentosProgramacion/m4.png"
+          },
+          {
+            "id": "m5",
+            "es": "Objeto",
+            "en": "Object",
+            "def_es": "Una instancia de una clase, compuesta por datos (propiedades) y código (métodos).",
+            "def_en": "An instance of a class, composed of data (properties) and code (methods).",
+            "img": "2315_FundamentosProgramacion/m5.png"
+          },
+          {
+            "id": "m6",
+            "es": "Función",
+            "en": "Function",
+            "def_es": "Un bloque de código reutilizable diseñado para realizar una tarea específica.",
+            "def_en": "A reusable block of code designed to perform a specific task.",
+            "img": "2315_FundamentosProgramacion/m6.png"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "CONOCE_LA_U_CAS_2025-2",
+    "code": "CONOCE LA U",
+    "title": "CONOCE LA U (CAS) 2025-2",
+    "description": "Curso de inducción y adaptación para nuevos estudiantes, cubriendo la historia, los servicios y la cultura de la universidad.",
+    "groups": [
+      {
+        "id": "g1_clau_historia",
+        "title": "Historia y Misión",
+        "members": ["Fabian", "Isabella"],
+        "cards": [
+          {
+            "id": "m1",
+            "es": "Misión",
+            "en": "Mission",
+            "def_es": "El propósito o razón de ser de la universidad, su contribución a la sociedad.",
+            "def_en": "The purpose or reason for being of the university, its contribution to society.",
+            "img": "CONOCE_LA_U_CAS_2025-2/m1.png"
+          },
+          {
+            "id": "m2",
+            "es": "Visión",
+            "en": "Vision",
+            "def_es": "El futuro deseado o ideal que la universidad aspira a alcanzar.",
+            "def_en": "The desired or ideal future that the university aspires to achieve.",
+            "img": "CONOCE_LA_U_CAS_2025-2/m2.png"
+          },
+          {
+            "id": "m3",
+            "es": "Valores",
+            "en": "Values",
+            "def_es": "Los principios éticos y morales que guían las acciones y decisiones de la comunidad universitaria.",
+            "def_en": "The ethical and moral principles that guide the actions and decisions of the university community.",
+            "img": "CONOCE_LA_U_CAS_2025-2/m3.png"
+          }
+        ]
+      },
+      {
+        "id": "g2_clau_servicios",
+        "title": "Servicios Estudiantiles",
+        "members": ["Santiago", "Gabriela"],
+        "cards": [
+          {
+            "id": "m4",
+            "es": "Bienestar Universitario",
+            "en": "University Wellness",
+            "def_es": "Departamento encargado de ofrecer servicios de salud, deporte, cultura y apoyo psicológico a los estudiantes.",
+            "def_en": "The department responsible for offering health, sports, culture, and psychological support services to students.",
+            "img": "CONOCE_LA_U_CAS_2025-2/m4.png"
+          },
+          {
+            "id": "m5",
+            "es": "Biblioteca",
+            "en": "Library",
+            "def_es": "El centro de recursos académicos con libros, bases de datos y salas de estudio para la comunidad.",
+            "def_en": "The center for academic resources with books, databases, and study rooms for the community.",
+            "img": "CONOCE_LA_U_CAS_2025-2/m5.png"
+          },
+          {
+            "id": "m6",
+            "es": "Registro Académico",
+            "en": "Academic Registry",
+            "def_es": "Oficina responsable de la gestión de la matrícula, notas y expedientes de los estudiantes.",
+            "def_en": "The office responsible for managing student enrollment, grades, and records.",
+            "img": "CONOCE_LA_U_CAS_2025-2/m6.png"
+          }
+        ]
+      }
+    ]
+  }
+]
