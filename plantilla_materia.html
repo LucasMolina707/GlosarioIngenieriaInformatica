@@ -1,129 +1,921 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF--8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Plantilla Editable de Materia | Herramientas y Técnicas de Estudio</title>
-
-    <link rel="stylesheet" href="assets/css/styles.css">
-
+    <title>Glosario Interactivo por Materias</title>
     <style>
+        /* === VARIABLES CSS (Fácil de editar para cambiar el tema) === */
+        :root {
+            /* Paleta de colores principal */
+            --color-primary: #005A9C;
+            /* Azul oscuro para elementos principales */
+            --color-primary-light: #007BFF;
+            /* Azul más brillante para interacciones */
+            --color-secondary: #FFC107;
+            /* Amarillo para acentos y llamadas a la acción */
+            --color-background: #f8f9fa;
+            /* Gris muy claro para el fondo de la página */
+            --color-surface: #ffffff;
+            /* Blanco para las superficies de las tarjetas y modales */
+            --color-text-primary: #212529;
+            /* Negro suave para el texto principal */
+            --color-text-secondary: #6c757d;
+            /* Gris para texto secundario o menos importante */
+            --color-border: #dee2e6;
+            /* Gris claro para los bordes */
+
+            /* Tamaños y espaciados */
+            --spacing-small: 8px;
+            /* Espaciado pequeño */
+            --spacing-medium: 16px;
+            /* Espaciado mediano */
+            --spacing-large: 24px;
+            /* Espaciado grande */
+            --border-radius: 8px;
+            /* Radio de los bordes para elementos redondeados */
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            /* Sombra estándar para dar profundidad */
+
+            /* Animaciones */
+            --transition-speed: 0.5s;
+            /* Velocidad de las transiciones (ej. giro de tarjeta) */
+        }
+
+        /* === RESETEO Y ESTILOS GLOBALES === */
+        *,
+        *::before,
+        *::after {
+            /* Aplica a todos los elementos */
+            box-sizing: border-box;
+            /* El padding y el borde se incluyen en el ancho/alto total */
+            margin: 0;
+            /* Elimina el margen por defecto */
+            padding: 0;
+            /* Elimina el padding por defecto */
+        }
+
         body {
-            background-color: #e9ecef; /* Un fondo ligeramente distinto para saber que es una plantilla */
+            /* Estilos para el cuerpo del documento */
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            /* Fuentes modernas y seguras para cualquier sistema operativo */
+            background-color: var(--color-background);
+            /* Color de fondo de la página */
+            color: var(--color-text-primary);
+            /* Color de texto por defecto */
+            line-height: 1.6;
+            /* Altura de línea para mejorar la legibilidad */
         }
-        .plantilla-info {
-            background-color: #fff;
-            border: 2px dashed var(--color-primary);
-            padding: var(--spacing-lg);
-            margin: var(--spacing-xl) auto;
-            border-radius: var(--border-radius);
+
+        .container {
+            /* Clase para centrar el contenido principal */
             max-width: 1200px;
+            /* Ancho máximo del contenido */
+            margin: 0 auto;
+            /* Centra el contenedor horizontalmente */
+            padding: var(--spacing-medium);
+            /* Añade un poco de espacio interior */
         }
-        /* ---- Animación de demostración al pasar el ratón ---- */
-        .card:hover .card__inner {
+
+        /* === ESTRUCTURA PRINCIPAL Y NAVEGACIÓN === */
+        .main-header {
+            /* Cabecera principal */
+            background-color: var(--color-surface);
+            /* Fondo blanco */
+            padding: var(--spacing-medium);
+            /* Espaciado interior */
+            border-bottom: 1px solid var(--color-border);
+            /* Línea divisoria inferior */
+            text-align: center;
+            /* Centra el título */
+        }
+
+        #class-nav {
+            /* Contenedor para los botones de las materias */
+            display: flex;
+            /* Usa flexbox para alinear los botones */
+            justify-content: center;
+            /* Centra los botones */
+            flex-wrap: wrap;
+            /* Permite que los botones pasen a la siguiente línea en pantallas pequeñas */
+            gap: var(--spacing-small);
+            /* Espacio entre los botones */
+            margin-top: var(--spacing-medium);
+            /* Espacio sobre los botones */
+        }
+
+        .class-btn {
+            /* Botones para seleccionar una materia */
+            padding: var(--spacing-small) var(--spacing-medium);
+            /* Espaciado interior */
+            border: 1px solid var(--color-border);
+            /* Borde sutil */
+            background-color: var(--color-surface);
+            /* Fondo blanco */
+            cursor: pointer;
+            /* El cursor se convierte en una mano */
+            border-radius: var(--border-radius);
+            /* Bordes redondeados */
+            font-size: 1rem;
+            /* Tamaño de fuente */
+            transition: all 0.2s ease-in-out;
+            /* Transición suave para todos los cambios */
+        }
+
+        .class-btn:hover {
+            /* Estilo al pasar el ratón por encima */
+            background-color: var(--color-primary);
+            /* Fondo azul oscuro */
+            color: white;
+            /* Texto blanco */
+            border-color: var(--color-primary);
+            /* Borde azul oscuro */
+        }
+
+        .class-btn.active {
+            /* Estilo para el botón de la materia activa */
+            background-color: var(--color-primary);
+            /* Fondo azul oscuro */
+            color: white;
+            /* Texto blanco */
+            border-color: var(--color-primary);
+            /* Borde azul oscuro */
+            box-shadow: 0 0 8px rgba(0, 90, 156, 0.4);
+            /* Sombra para destacarlo */
+        }
+
+        /* === PESTAÑAS Y GRUPOS === */
+        .tabs-container {
+            /* Contenedor para las pestañas (ventanas) */
+            display: flex;
+            /* Usa flexbox */
+            border-bottom: 2px solid var(--color-border);
+            /* Línea divisoria inferior */
+            margin-bottom: var(--spacing-large);
+            /* Espacio debajo de las pestañas */
+        }
+
+        .tab {
+            /* Botones de las pestañas */
+            padding: var(--spacing-small) var(--spacing-medium);
+            /* Espaciado interior */
+            border: none;
+            /* Sin borde */
+            background: none;
+            /* Sin fondo */
+            cursor: pointer;
+            /* Cursor de mano */
+            font-size: 1.1rem;
+            /* Texto un poco más grande */
+            color: var(--color-text-secondary);
+            /* Color de texto gris */
+            position: relative;
+            /* Posición relativa para la línea inferior */
+        }
+
+        .tab.active {
+            /* Estilo de la pestaña activa */
+            color: var(--color-primary);
+            /* Color de texto azul */
+            font-weight: 600;
+            /* Texto en negrita */
+        }
+
+        .tab.active::after {
+            /* Línea azul debajo de la pestaña activa */
+            content: '';
+            /* Contenido vacío, necesario para pseudo-elementos */
+            position: absolute;
+            /* Posición absoluta respecto a la pestaña */
+            bottom: -2px;
+            /* Se alinea con la línea del contenedor */
+            left: 0;
+            /* Empieza a la izquierda */
+            width: 100%;
+            /* Ocupa todo el ancho */
+            height: 2px;
+            /* Altura de la línea */
+            background-color: var(--color-primary);
+            /* Color azul */
+        }
+
+        .group {
+            /* Contenedor para un grupo de estudio */
+            margin-bottom: var(--spacing-large);
+            /* Espacio debajo de cada grupo */
+            background-color: var(--color-surface);
+            /* Fondo blanco */
+            padding: var(--spacing-medium);
+            /* Espaciado interior */
+            border-radius: var(--border-radius);
+            /* Bordes redondeados */
+            box-shadow: var(--shadow);
+            /* Sombra sutil */
+        }
+
+        .group-title {
+            /* Título del grupo */
+            margin-bottom: var(--spacing-small);
+            /* Espacio debajo del título */
+            border-bottom: 1px solid var(--color-border);
+            /* Línea divisoria */
+            padding-bottom: var(--spacing-small);
+            /* Espacio sobre la línea */
+        }
+
+        .group-members {
+            /* Lista de miembros del grupo */
+            font-style: italic;
+            /* Texto en cursiva */
+            color: var(--color-text-secondary);
+            /* Color gris */
+            margin-bottom: var(--spacing-medium);
+            /* Espacio debajo */
+        }
+
+        /* === ETIQUETAS / TARJETAS (CARDS) Y ANIMACIÓN 3D === */
+        .cards-grid {
+            /* Grilla que contiene las tarjetas */
+            display: grid;
+            /* Usa CSS Grid para un diseño flexible */
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            /* Columnas responsivas: se ajustan automáticamente */
+            gap: var(--spacing-medium);
+            /* Espacio entre las tarjetas */
+        }
+
+        .card {
+            /* Contenedor principal de la tarjeta (define la perspectiva 3D) */
+            background-color: transparent;
+            /* Fondo transparente, el color lo tienen las caras */
+            height: 250px;
+            /* Altura fija para la tarjeta */
+            perspective: 1500px;
+            /* Profundidad de la escena 3D */
+            border-radius: var(--border-radius);
+        }
+
+        .card-inner {
+            /* Contenedor interno que rota */
+            position: relative;
+            /* Posición relativa para las caras absolutas */
+            width: 100%;
+            /* Ancho completo */
+            height: 100%;
+            /* Altura completa */
+            transition: transform var(--transition-speed) ease-in-out;
+            /* Transición suave para la rotación */
+            transform-style: preserve-3d;
+            /* Mantiene los elementos en un espacio 3D */
+        }
+
+        .card.flipped .card-inner {
+            /* Cuando la tarjeta tiene la clase 'flipped', se gira */
             transform: rotateY(180deg);
+            /* Rota 180 grados en el eje Y */
+        }
+
+        .card-front,
+        .card-back {
+            /* Estilos comunes para ambas caras de la tarjeta */
+            position: absolute;
+            /* Posicionadas una sobre la otra */
+            width: 100%;
+            /* Ancho completo */
+            height: 100%;
+            /* Altura completa */
+            backface-visibility: hidden;
+            /* Oculta la cara trasera cuando no está visible */
+            display: flex;
+            /* Usa flexbox para centrar el contenido */
+            flex-direction: column;
+            /* Contenido en columna */
+            align-items: center;
+            /* Centrado horizontal */
+            justify-content: space-between;
+            /* Espacio entre los elementos */
+            padding: var(--spacing-medium);
+            /* Espaciado interior */
+            background-color: var(--color-surface);
+            /* Fondo blanco */
+            border: 1px solid var(--color-border);
+            /* Borde sutil */
+            border-radius: var(--border-radius);
+            /* Bordes redondeados */
+            box-shadow: var(--shadow);
+            /* Sombra */
+        }
+
+        .card-back {
+            /* Estilo específico para la cara trasera */
+            transform: rotateY(180deg);
+            /* Inicialmente rotada, de espaldas al usuario */
+        }
+
+        .card-term-es {
+            /* Término en español en la cara frontal */
+            font-size: 1.5rem;
+            /* Tamaño de fuente grande */
+            font-weight: bold;
+            /* Texto en negrita */
+            color: var(--color-primary);
+            /* Color azul */
+        }
+
+        .card-img-mini {
+            /* Mini imagen en la cara frontal */
+            width: 60px;
+            /* Ancho fijo */
+            height: 60px;
+            /* Altura fija */
+            object-fit: cover;
+            /* La imagen cubre el espacio sin deformarse */
+            border-radius: 50%;
+            /* Imagen circular */
+            border: 2px solid var(--color-border);
+            /* Borde alrededor de la imagen */
+        }
+
+        .card-actions {
+            /* Contenedor para los botones de la tarjeta */
+            display: flex;
+            /* Usa flexbox */
+            gap: var(--spacing-small);
+            /* Espacio entre botones */
+            width: 100%;
+            /* Ocupa todo el ancho */
+            justify-content: flex-end;
+            /* Alinea los botones a la derecha */
+        }
+
+        .card-btn {
+            /* Botones dentro de la tarjeta */
+            background-color: var(--color-primary-light);
+            /* Fondo azul brillante */
+            color: white;
+            /* Texto blanco */
+            border: none;
+            /* Sin borde */
+            padding: var(--spacing-small);
+            /* Espaciado interior */
+            border-radius: 5px;
+            /* Bordes redondeados */
+            cursor: pointer;
+            /* Cursor de mano */
+            font-size: 0.8rem;
+            /* Texto pequeño */
+        }
+
+        .card-back h4 {
+            /* Título en la cara trasera */
+            color: var(--color-primary);
+            /* Color azul */
+        }
+
+        .card-back p {
+            /* Definiciones en la cara trasera */
+            font-size: 0.9rem;
+            /* Texto un poco más pequeño */
+            text-align: center;
+            /* Texto centrado */
+            flex-grow: 1;
+            /* Ocupa el espacio disponible */
+            overflow-y: auto;
+            /* Scroll si el texto es muy largo */
+        }
+
+        /* === MODAL (VISTA EXPANDIDA) === */
+        .modal-container {
+            /* Contenedor del modal (ocupa toda la pantalla) */
+            position: fixed;
+            /* Fijo en la pantalla */
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            /* Fondo negro semitransparente */
+            display: flex;
+            /* Usa flexbox para centrar el contenido */
+            align-items: center;
+            /* Centrado vertical */
+            justify-content: center;
+            /* Centrado horizontal */
+            z-index: 1000;
+            /* Se muestra por encima de todo */
+            opacity: 0;
+            /* Inicialmente invisible */
+            visibility: hidden;
+            /* Inicialmente oculto */
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            /* Transición suave para aparecer/desaparecer */
+        }
+
+        .modal-container.visible {
+            /* Estilo cuando el modal es visible */
+            opacity: 1;
+            /* Totalmente visible */
+            visibility: visible;
+            /* Visible */
+        }
+
+        .modal-content {
+            /* Contenido del modal */
+            background-color: var(--color-surface);
+            /* Fondo blanco */
+            padding: var(--spacing-large);
+            /* Espaciado interior grande */
+            border-radius: var(--border-radius);
+            /* Bordes redondeados */
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            /* Sombra más pronunciada */
+            width: 90%;
+            /* 90% del ancho de la pantalla */
+            max-width: 700px;
+            /* Ancho máximo de 700px */
+            max-height: 90vh;
+            /* Altura máxima del 90% de la ventana */
+            overflow-y: auto;
+            /* Scroll si el contenido es muy alto */
+            position: relative;
+            /* Para posicionar el botón de cerrar */
+            transform: scale(0.9);
+            /* Empieza un poco más pequeño */
+            transition: transform 0.3s ease;
+            /* Transición suave para el tamaño */
+        }
+
+        .modal-container.visible .modal-content {
+            /* Animación al hacerse visible */
+            transform: scale(1);
+            /* Escala a su tamaño normal */
+        }
+
+        .modal-close {
+            /* Botón de cerrar el modal */
+            position: absolute;
+            /* Posición absoluta respecto al contenido */
+            top: var(--spacing-medium);
+            /* Arriba */
+            right: var(--spacing-medium);
+            /* A la derecha */
+            background: none;
+            /* Sin fondo */
+            border: none;
+            /* Sin borde */
+            font-size: 1.8rem;
+            /* Tamaño grande */
+            cursor: pointer;
+            /* Cursor de mano */
+            color: var(--color-text-secondary);
+            /* Color gris */
+        }
+
+        #modal-body {
+            /* Contenido específico inyectado en el modal */
+            display: grid;
+            /* Usa CSS Grid */
+            grid-template-columns: 1fr;
+            /* Por defecto, una sola columna */
+            gap: var(--spacing-medium);
+            /* Espacio entre elementos */
+        }
+
+        .modal-img {
+            /* Imagen en el modal */
+            width: 100%;
+            /* Ancho completo */
+            max-height: 300px;
+            /* Altura máxima */
+            object-fit: cover;
+            /* Cubre el espacio sin deformarse */
+            border-radius: var(--border-radius);
+            /* Bordes redondeados */
+        }
+
+        /* === ACCESIBILIDAD Y RESPONSIVIDAD === */
+        @media (prefers-reduced-motion: reduce) {
+
+            /* Si el usuario prefiere movimiento reducido */
+            .card-inner,
+            .modal-container,
+            .modal-content {
+                transition: none;
+                /* Desactiva todas las transiciones */
+            }
+        }
+
+        @media (min-width: 600px) {
+            /* Para pantallas de 600px o más */
+            #modal-body {
+                grid-template-columns: 200px 1fr;
+                /* Dos columnas: una para la imagen, otra para el texto */
+                align-items: center;
+                /* Alinea los elementos verticalmente */
+            }
+
+            .modal-img {
+                max-height: 200px;
+                /* Reduce la altura máxima de la imagen */
+            }
+        }
+
+        /* === ESTILOS DE IMPRESIÓN === */
+        @media print {
+            /* Cuando se intenta imprimir la página */
+            body {
+                background-color: white;
+                /* Fondo blanco para ahorrar tinta */
+                color: black;
+                /* Texto negro */
+            }
+
+            .main-header,
+            .card-actions,
+            .modal-container {
+                display: none !important;
+                /* Oculta la cabecera, los botones y el modal */
+            }
+
+            .cards-grid {
+                display: block;
+                /* Cambia la grilla a un flujo de bloques */
+            }
+
+            .card {
+                page-break-inside: avoid;
+                /* Evita que una tarjeta se divida entre dos páginas */
+                box-shadow: none;
+                /* Sin sombra */
+                border: 1px solid #ccc;
+                /* Borde simple */
+                height: auto;
+                /* Altura automática */
+                margin-bottom: 20px;
+                /* Espacio debajo de cada tarjeta */
+            }
+
+            .card-inner,
+            .card-front,
+            .card-back {
+                position: static;
+                /* Posición estática, una cara debajo de la otra */
+                transform: none;
+                /* Sin rotación */
+                display: block;
+                /* Muestra como bloque */
+                backface-visibility: visible;
+                /* Ambas caras visibles */
+                box-shadow: none;
+                /* Sin sombra */
+            }
         }
     </style>
 </head>
+
 <body>
+    <header class="main-header">
+        <h1>Glosario Interactivo</h1>
+        <nav id="class-nav"></nav>
+    </header>
 
-    <main class="container">
+    <main class="container" id="content-area">
+        <p>Selecciona una materia para comenzar a explorar el glosario.</p>
+    </main>
 
-        <div class="plantilla-info">
-            <h1>Plantilla Editable de Materia</h1>
-            <p>Esta es una vista estática para editar y previsualizar el contenido de una materia. Aquí puedes modificar textos, títulos y tarjetas. Para ver la animación de giro, simplemente pasa el cursor sobre una tarjeta.</p>
+    <div id="modal-container" class="modal-container">
+        <div class="modal-content">
+            <button id="modal-close" class="modal-close" aria-label="Cerrar">&times;</button>
+            <div id="modal-body"></div>
         </div>
+    </div>
 
-        <article class="materia" id="2093_Herramientas">
 
-            <header class="materia__header">
-                <span class="materia__code">2093</span>
-                <h2 class="materia__title">Herramientas y Técnicas de Estudio</h2>
-                <p class="materia__description">En esta ventana, encontrarás los conceptos clave de la materia, organizados por grupos de estudio.</p>
-            </header>
+    <script>
+        // === ZONA DE DATOS (JSON Local) ===
+        // Aquí se define todo el contenido. Para añadir más, sigue esta estructura.
+        const glossaryData = {
+            // Clave única para la primera materia
+            "herramientas": {
+                className: "Herramientas de Estudio", // Nombre a mostrar en el botón
+                windows: [ // Array de "ventanas" o pestañas
+                    {
+                        title: "Teoría", // Título de la pestaña
+                        groups: [ // Array de grupos dentro de esta pestaña
+                            {
+                                groupName: "Grupo A: Métodos de Organización",
+                                members: ["Ana Pérez", "Luis García"], // Lista de integrantes
+                                tags: [ // Array de "etiquetas" o tarjetas
+                                    {
+                                        es: "Mapa Conceptual",
+                                        en: "Concept Map",
+                                        def_es: "Herramienta gráfica para organizar y representar el conocimiento.",
+                                        def_en: "A graphical tool for organizing and representing knowledge.",
+                                        img: "https://via.placeholder.com/300x200.png?text=Mapa+Conceptual" // URL de la imagen
+                                    },
+                                    {
+                                        es: "Resumen",
+                                        en: "Summary",
+                                        def_es: "Escrito que sintetiza las ideas principales de un texto.",
+                                        def_en: "A text that synthesizes the main ideas of a text.",
+                                        img: "https://via.placeholder.com/300x200.png?text=Resumen"
+                                    },
+                                    {
+                                        es: "Ficha de Estudio",
+                                        en: "Study Card",
+                                        def_es: "Tarjeta que contiene datos o información clave sobre un tema.",
+                                        def_en: "A card containing key data or information on a specific topic.",
+                                        img: "https://via.placeholder.com/300x200.png?text=Ficha"
+                                    },
+                                ]
+                            },
+                            {
+                                groupName: "Grupo B: Técnicas de Lectura",
+                                members: ["Marta Solís"],
+                                tags: [
+                                    {
+                                        es: "Lectura Rápida",
+                                        en: "Speed Reading",
+                                        def_es: "Métodos para aumentar la velocidad de lectura sin reducir la comprensión.",
+                                        def_en: "Methods to increase reading speed without reducing comprehension.",
+                                        img: "https://via.placeholder.com/300x200.png?text=Lectura"
+                                    },
+                                    {
+                                        es: "Subrayado",
+                                        en: "Underlining",
+                                        def_es: "Destacar las partes más importantes de un texto.",
+                                        def_en: "Highlighting the most important parts of a text.",
+                                        img: "https://via.placeholder.com/300x200.png?text=Subrayado"
+                                    },
+                                    {
+                                        es: "Mnemotecnia",
+                                        en: "Mnemonic",
+                                        def_es: "Técnica de memorización que asocia ideas con imágenes o frases.",
+                                        def_en: "A memorization technique that associates ideas with images or phrases.",
+                                        img: "https://via.placeholder.com/300x200.png?text=Mnemotecnia"
+                                    },
+                                ]
+                            }
+                        ]
+                    }
+                    // Podrías añadir otra ventana aquí, por ejemplo: { title: "Práctica", groups: [...] }
+                ]
+            },
+            // Clave única para la segunda materia
+            "sistemas_operativos": {
+                className: "Sistemas Operativos I",
+                windows: [
+                    {
+                        title: "Fundamentos",
+                        groups: [
+                            {
+                                groupName: "Grupo A: Gestión de Procesos",
+                                members: ["Carlos Ruiz"],
+                                tags: [
+                                    {
+                                        es: "Proceso",
+                                        en: "Process",
+                                        def_es: "Una instancia de un programa de computadora que está siendo ejecutado.",
+                                        def_en: "An instance of a computer program that is being executed.",
+                                        img: "https://via.placeholder.com/300x200.png?text=Proceso"
+                                    },
+                                    {
+                                        es: "Hilo (Thread)",
+                                        en: "Thread",
+                                        def_es: "La unidad de ejecución más pequeña gestionada por un sistema operativo.",
+                                        def_en: "The smallest unit of execution managed by an operating system.",
+                                        img: "https://via.placeholder.com/300x200.png?text=Hilo"
+                                    },
+                                    {
+                                        es: "Deadlock",
+                                        en: "Deadlock",
+                                        def_es: "Situación en la que dos o más procesos se bloquean mutuamente.",
+                                        def_en: "A situation where two or more processes block each other.",
+                                        img: "https://via.placeholder.com/300x200.png?text=Deadlock"
+                                    },
+                                ]
+                            },
+                            {
+                                groupName: "Grupo B: Memoria",
+                                members: ["Sofía Luna", "David Torres"],
+                                tags: [
+                                    {
+                                        es: "Memoria Virtual",
+                                        en: "Virtual Memory",
+                                        def_es: "Técnica que proporciona una abstracción del espacio de memoria real.",
+                                        def_en: "A technique that provides an abstraction of the real memory space.",
+                                        img: "https://via.placeholder.com/300x200.png?text=Memoria"
+                                    },
+                                    {
+                                        es: "Paginación",
+                                        en: "Paging",
+                                        def_es: "Esquema que permite que el espacio de un proceso no sea contiguo.",
+                                        def_en: "A scheme that allows a process's space to be non-contiguous.",
+                                        img: "https://via.placeholder.com/300x200.png?text=Paginación"
+                                    },
+                                    {
+                                        es: "Fragmentación",
+                                        en: "Fragmentation",
+                                        def_es: "Ocurre cuando el espacio de memoria libre se divide en pequeños bloques.",
+                                        def_en: "Occurs when free memory space is broken into small blocks.",
+                                        img: "https://via.placeholder.com/300x200.png?text=Fragmentación"
+                                    },
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        };
 
-            <div class="materia__tabs" role="tablist">
-                <button class="materia__tab materia__tab--active" role="tab" aria-selected="true">
-                    Teoría
-                </button>
-                <button class="materia__tab" role="tab" aria-selected="false">
-                    Práctica (Ejemplo)
-                </button>
+        // === SELECCIÓN DE ELEMENTOS DEL DOM ===
+        // Guardamos referencias a los elementos HTML que usaremos frecuentemente.
+        const classNav = document.getElementById('class-nav');
+        const contentArea = document.getElementById('content-area');
+        const modalContainer = document.getElementById('modal-container');
+        const modalBody = document.getElementById('modal-body');
+        const modalClose = document.getElementById('modal-close');
+
+        // === FUNCIONES DE RENDERIZADO (Crean el HTML) ===
+
+        /**
+         * Crea y muestra el contenido de una materia específica.
+         * @param {string} classKey - La clave de la materia en el objeto `glossaryData`.
+         */
+        function renderClassContent(classKey) {
+            const classData = glossaryData[classKey]; // Obtiene los datos de la materia
+            if (!classData) return; // Si no existe, no hace nada
+
+            // Crea las pestañas (ventanas)
+            const tabsHTML = classData.windows.map((window, index) =>
+                `<button class="tab ${index === 0 ? 'active' : ''}" data-window-index="${index}">${window.title}</button>`
+            ).join('');
+
+            // Crea el contenido de los grupos
+            const groupsHTML = classData.windows.map((window, windowIndex) =>
+                window.groups.map(group => `
+            <div class="group" style="display: ${windowIndex === 0 ? 'block' : 'none'}" data-window-index="${windowIndex}">
+              <h3 class="group-title">${group.groupName}</h3>
+              <p class="group-members">Integrantes: ${group.members.join(', ')}</p>
+              <div class="cards-grid">
+                ${group.tags.map(tag => renderCard(tag)).join('')}
+              </div>
             </div>
+          `).join('')
+            ).join('');
 
-            <div class="materia__content">
+            // Inserta todo el HTML generado en el área de contenido
+            contentArea.innerHTML = `
+          <div class="tabs-container">${tabsHTML}</div>
+          <div class="groups-container">${groupsHTML}</div>
+        `;
+        }
 
-                <div id="window-w1" class="materia__window materia__window--active" role="tabpanel">
-                    
-                    <section class="materia__group" id="g1">
-                        <h3 class="materia__group-title">Grupo A: Métodos de Organización</h3>
-                        <div class="cards-grid">
+        /**
+         * Crea el HTML para una sola tarjeta (etiqueta).
+         * @param {object} tag - El objeto con los datos de la tarjeta.
+         * @returns {string} - El string HTML de la tarjeta.
+         */
+        function renderCard(tag) {
+            // Se usa encodeURIComponent para guardar el objeto de datos de forma segura en un atributo HTML
+            const tagData = encodeURIComponent(JSON.stringify(tag));
 
-                            <div class="card" role="region" aria-label="Tarjeta de estudio para Mapa Conceptual">
-                                <div class="card__inner">
-                                    <div class="card__front">
-                                        <h4 class="card__term">Mapa Conceptual</h4> <img src="assets/images/2093_Herramientas/c1.png" alt="Mapa Conceptual" class="card__thumbnail" onerror="this.src='https://via.placeholder.com/150';"> <div class="card__actions">
-                                            <button class="card__btn">Girar</button>
-                                            <button class="card__btn">Ampliar</button>
-                                        </div>
-                                    </div>
-                                    <div class="card__back">
-                                        <h4 class="card__term card__term--en">Concept Map</h4> <p class="card__def"><strong>ES:</strong> Herramienta gráfica para organizar y representar el conocimiento.</p> <p class="card__def"><strong>EN:</strong> A graphical tool for organizing and representing knowledge.</p> <div class="card__actions">
-                                            <button class="card__btn">Girar</button>
-                                            <button class="card__btn">Ampliar</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="card" role="region" aria-label="Tarjeta de estudio para Resumen">
-                                <div class="card__inner">
-                                    <div class="card__front">
-                                        <h4 class="card__term">Resumen</h4>
-                                        <img src="assets/images/2093_Herramientas/c2.png" alt="Resumen" class="card__thumbnail" onerror="this.src='https://via.placeholder.com/150';">
-                                        <div class="card__actions">
-                                            <button class="card__btn">Girar</button>
-                                            <button class="card__btn">Ampliar</button>
-                                        </div>
-                                    </div>
-                                    <div class="card__back">
-                                        <h4 class="card__term card__term--en">Summary</h4>
-                                        <p class="card__def"><strong>ES:</strong> Escrito que sintetiza las ideas principales de un texto.</p>
-                                        <p class="card__def"><strong>EN:</strong> A text that synthesizes the main ideas of a text.</p>
-                                        <div class="card__actions">
-                                            <button class="card__btn">Girar</button>
-                                            <button class="card__btn">Ampliar</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="card" role="region" aria-label="Tarjeta de estudio para Ficha de Estudio">
-                                <div class="card__inner">
-                                    <div class="card__front">
-                                        <h4 class="card__term">Ficha de Estudio</h4>
-                                        <img src="assets/images/2093_Herramientas/c3.png" alt="Ficha de Estudio" class="card__thumbnail" onerror="this.src='https://via.placeholder.com/150';">
-                                        <div class="card__actions">
-                                            <button class="card__btn">Girar</button>
-                                            <button class="card__btn">Ampliar</button>
-                                        </div>
-                                    </div>
-                                    <div class="card__back">
-                                        <h4 class="card__term card__term--en">Study Card</h4>
-                                        <p class="card__def"><strong>ES:</strong> Tarjeta que contiene datos o información clave sobre un tema específico.</p>
-                                        <p class="card__def"><strong>EN:</strong> A card containing key data or information on a specific topic.</p>
-                                        <div class="card__actions">
-                                            <button class="card__btn">Girar</button>
-                                            <button class="card__btn">Ampliar</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            </div>
-                    </section>
-                    </div>
+            return `
+          <div class="card" aria-label="Tarjeta para ${tag.es}">
+            <div class="card-inner">
+              <div class="card-front">
+                <h3 class="card-term-es">${tag.es}</h3>
+                <img src="${tag.img}" alt="${tag.es}" class="card-img-mini" loading="lazy">
+                <div class="card-actions">
+                  <button class="card-btn btn-flip">Girar</button>
+                  <button class="card-btn btn-expand" data-tag='${tagData}'>Expandir</button>
+                </div>
+              </div>
+              <div class="card-back">
+                <div>
+                    <h4>${tag.en}</h4>
+                    <p><b>ES:</b> ${tag.def_es}</p>
+                    <p><b>EN:</b> ${tag.def_en}</p>
+                </div>
+                <div class="card-actions">
+                  <button class="card-btn btn-flip">Girar</button>
+                  <button class="card-btn btn-expand" data-tag='${tagData}'>Expandir</button>
+                </div>
+              </div>
             </div>
-        </article>
-        </main>
+          </div>
+        `;
+        }
+
+        // === FUNCIONES DE MANEJO DE EVENTOS ===
+
+        /**
+         * Maneja los clics dentro del área de contenido (pestañas, botones de tarjeta).
+         * Usa delegación de eventos para eficiencia.
+         * @param {Event} e - El objeto del evento de clic.
+         */
+        function handleContentClick(e) {
+            const target = e.target; // El elemento específico donde se hizo clic
+
+            // Si se hizo clic en el botón "Girar"
+            if (target.classList.contains('btn-flip')) {
+                // Busca el contenedor de la tarjeta más cercano y le añade/quita la clase 'flipped'
+                target.closest('.card').classList.toggle('flipped');
+            }
+
+            // Si se hizo clic en el botón "Expandir"
+            if (target.classList.contains('btn-expand')) {
+                // Obtiene los datos de la tarjeta desde el atributo 'data-tag'
+                const tagData = JSON.parse(decodeURIComponent(target.dataset.tag));
+                // Abre el modal con esos datos
+                openModal(tagData);
+            }
+
+            // Si se hizo clic en una pestaña (tab)
+            if (target.classList.contains('tab')) {
+                const windowIndex = target.dataset.windowIndex; // Obtiene el índice de la pestaña
+
+                // Quita la clase 'active' de todas las pestañas
+                contentArea.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                // Añade 'active' a la pestaña clicada
+                target.classList.add('active');
+
+                // Oculta todos los grupos
+                contentArea.querySelectorAll('.group').forEach(g => g.style.display = 'none');
+                // Muestra solo los grupos que corresponden a la pestaña clicada
+                contentArea.querySelectorAll(`.group[data-window-index="${windowIndex}"]`).forEach(g => g.style.display = 'block');
+            }
+        }
+
+        /**
+         * Abre el modal y muestra la información completa de una tarjeta.
+         * @param {object} tag - Los datos de la tarjeta a mostrar.
+         */
+        function openModal(tag) {
+            // Crea el HTML para el contenido del modal
+            modalBody.innerHTML = `
+          <img src="${tag.img}" alt="${tag.es}" class="modal-img">
+          <div>
+            <h3>${tag.es} <span style="color: var(--color-text-secondary); font-weight: normal;">/ ${tag.en}</span></h3>
+            <h4>Definición (ES)</h4>
+            <p>${tag.def_es}</p>
+            <h4>Definition (EN)</h4>
+            <p>${tag.def_en}</p>
+          </div>
+        `;
+            // Hace visible el contenedor del modal
+            modalContainer.classList.add('visible');
+        }
+
+        /** Cierra el modal. */
+        function closeModal() {
+            modalContainer.classList.remove('visible');
+        }
+
+        // === FUNCIÓN DE INICIALIZACIÓN ===
+
+        /**
+         * Se ejecuta cuando la página ha cargado completamente.
+         * Configura el estado inicial de la aplicación.
+         */
+        function init() {
+            // Crea los botones de navegación de las materias
+            classNav.innerHTML = Object.keys(glossaryData).map(key =>
+                `<button class="class-btn" data-class-key="${key}">${glossaryData[key].className}</button>`
+            ).join('');
+
+            // Añade un event listener a cada botón de materia
+            classNav.querySelectorAll('.class-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    // Quita 'active' de todos los botones
+                    classNav.querySelectorAll('.class-btn').forEach(b => b.classList.remove('active'));
+                    // Añade 'active' al botón clicado
+                    btn.classList.add('active');
+                    // Renderiza el contenido de la materia seleccionada
+                    renderClassContent(btn.dataset.classKey);
+                });
+            });
+
+            // Configura los event listeners principales
+            contentArea.addEventListener('click', handleContentClick);
+            modalClose.addEventListener('click', closeModal);
+            // Cierra el modal si se hace clic en el fondo oscuro
+            modalContainer.addEventListener('click', (e) => {
+                if (e.target === modalContainer) {
+                    closeModal();
+                }
+            });
+
+            // Simula un clic en el primer botón de materia para cargar el contenido inicial
+            if (classNav.querySelector('.class-btn')) {
+                classNav.querySelector('.class-btn').click();
+            }
+        }
+
+        // Se asegura de que el DOM esté completamente cargado antes de ejecutar la función init.
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
 
 </body>
+
 </html>
