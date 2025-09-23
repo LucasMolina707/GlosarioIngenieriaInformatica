@@ -1,1 +1,129 @@
 
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plantilla Editable de Materia | Herramientas y Técnicas de Estudio</title>
+
+    <link rel="stylesheet" href="assets/css/styles.css">
+
+    <style>
+        body {
+            background-color: #e9ecef; /* Un fondo ligeramente distinto para saber que es una plantilla */
+        }
+        .plantilla-info {
+            background-color: #fff;
+            border: 2px dashed var(--color-primary);
+            padding: var(--spacing-lg);
+            margin: var(--spacing-xl) auto;
+            border-radius: var(--border-radius);
+            max-width: 1200px;
+        }
+        /* ---- Animación de demostración al pasar el ratón ---- */
+        .card:hover .card__inner {
+            transform: rotateY(180deg);
+        }
+    </style>
+</head>
+<body>
+
+    <main class="container">
+
+        <div class="plantilla-info">
+            <h1>Plantilla Editable de Materia</h1>
+            <p>Esta es una vista estática para editar y previsualizar el contenido de una materia. Aquí puedes modificar textos, títulos y tarjetas. Para ver la animación de giro, simplemente pasa el cursor sobre una tarjeta.</p>
+        </div>
+
+        <article class="materia" id="2093_Herramientas">
+
+            <header class="materia__header">
+                <span class="materia__code">2093</span>
+                <h2 class="materia__title">Herramientas y Técnicas de Estudio</h2>
+                <p class="materia__description">En esta ventana, encontrarás los conceptos clave de la materia, organizados por grupos de estudio.</p>
+            </header>
+
+            <div class="materia__tabs" role="tablist">
+                <button class="materia__tab materia__tab--active" role="tab" aria-selected="true">
+                    Teoría
+                </button>
+                <button class="materia__tab" role="tab" aria-selected="false">
+                    Práctica (Ejemplo)
+                </button>
+            </div>
+
+            <div class="materia__content">
+
+                <div id="window-w1" class="materia__window materia__window--active" role="tabpanel">
+                    
+                    <section class="materia__group" id="g1">
+                        <h3 class="materia__group-title">Grupo A: Métodos de Organización</h3>
+                        <div class="cards-grid">
+
+                            <div class="card" role="region" aria-label="Tarjeta de estudio para Mapa Conceptual">
+                                <div class="card__inner">
+                                    <div class="card__front">
+                                        <h4 class="card__term">Mapa Conceptual</h4> <img src="assets/images/2093_Herramientas/c1.png" alt="Mapa Conceptual" class="card__thumbnail" onerror="this.src='https://via.placeholder.com/150';"> <div class="card__actions">
+                                            <button class="card__btn">Girar</button>
+                                            <button class="card__btn">Ampliar</button>
+                                        </div>
+                                    </div>
+                                    <div class="card__back">
+                                        <h4 class="card__term card__term--en">Concept Map</h4> <p class="card__def"><strong>ES:</strong> Herramienta gráfica para organizar y representar el conocimiento.</p> <p class="card__def"><strong>EN:</strong> A graphical tool for organizing and representing knowledge.</p> <div class="card__actions">
+                                            <button class="card__btn">Girar</button>
+                                            <button class="card__btn">Ampliar</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card" role="region" aria-label="Tarjeta de estudio para Resumen">
+                                <div class="card__inner">
+                                    <div class="card__front">
+                                        <h4 class="card__term">Resumen</h4>
+                                        <img src="assets/images/2093_Herramientas/c2.png" alt="Resumen" class="card__thumbnail" onerror="this.src='https://via.placeholder.com/150';">
+                                        <div class="card__actions">
+                                            <button class="card__btn">Girar</button>
+                                            <button class="card__btn">Ampliar</button>
+                                        </div>
+                                    </div>
+                                    <div class="card__back">
+                                        <h4 class="card__term card__term--en">Summary</h4>
+                                        <p class="card__def"><strong>ES:</strong> Escrito que sintetiza las ideas principales de un texto.</p>
+                                        <p class="card__def"><strong>EN:</strong> A text that synthesizes the main ideas of a text.</p>
+                                        <div class="card__actions">
+                                            <button class="card__btn">Girar</button>
+                                            <button class="card__btn">Ampliar</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card" role="region" aria-label="Tarjeta de estudio para Ficha de Estudio">
+                                <div class="card__inner">
+                                    <div class="card__front">
+                                        <h4 class="card__term">Ficha de Estudio</h4>
+                                        <img src="assets/images/2093_Herramientas/c3.png" alt="Ficha de Estudio" class="card__thumbnail" onerror="this.src='https://via.placeholder.com/150';">
+                                        <div class="card__actions">
+                                            <button class="card__btn">Girar</button>
+                                            <button class="card__btn">Ampliar</button>
+                                        </div>
+                                    </div>
+                                    <div class="card__back">
+                                        <h4 class="card__term card__term--en">Study Card</h4>
+                                        <p class="card__def"><strong>ES:</strong> Tarjeta que contiene datos o información clave sobre un tema específico.</p>
+                                        <p class="card__def"><strong>EN:</strong> A card containing key data or information on a specific topic.</p>
+                                        <div class="card__actions">
+                                            <button class="card__btn">Girar</button>
+                                            <button class="card__btn">Ampliar</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            </div>
+                    </section>
+                    </div>
+            </div>
+        </article>
+        </main>
+
+</body>
+</html>
