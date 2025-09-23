@@ -3,115 +3,696 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Glosario Interactivo por Materias | Lucas Molina</title>
 
-    <title>Portal Académico | Glosario Interactivo</title>
-
-    <meta name="description" content="Un portal académico con glosarios interactivos para materias clave. Aprende términos y conceptos de forma visual y efectiva.">
-
-    <link rel="canonical" href="https://ejemplo.com/">
-
-    <meta name="robots" content="index,follow">
-
-    <meta property="og:title" content="Portal Académico | Glosario Interactivo">
-    <meta property="og:description" content="Explora glosarios interactivos por materia con tarjetas de estudio, definiciones y más.">
+    <meta name="description" content="Explora un glosario académico interactivo con tarjetas de estudio para materias como Programación, Matemáticas y más. Creado por Lucas Molina.">
+    <meta name="keywords" content="glosario, interactivo, tarjetas de estudio, flashcards, programación, sistemas operativos, matemáticas, lucas molina">
+    <meta name="author" content="Lucas Molina">
+    <link rel="canonical" href="https://www.ejemplo.com">
+    <meta property="og:title" content="Glosario Interactivo por Materias">
+    <meta property="og:description" content="Una herramienta de estudio visual para repasar conceptos clave de diferentes asignaturas.">
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://ejemplo.com/">
-    <meta property="og:image" content="https://ejemplo.com/assets/images/seo/cover.png">
+    <meta property="og:url" content="https://www.ejemplo.com">
+    <meta property="og:image" content="https://via.placeholder.com/1200x630.png?text=Glosario+Interactivo">
+    
+    <style>
+        :root {
+            --color-primary: #005A9C;
+            --color-primary-light: #007BFF;
+            --color-secondary: #FFC107;
+            --color-background: #f8f9fa;
+            --color-surface: #ffffff;
+            --color-text-primary: #212529;
+            --color-text-secondary: #6c757d;
+            --color-border: #dee2e6;
+            --spacing-small: 8px;
+            --spacing-medium: 16px;
+            --spacing-large: 24px;
+            --border-radius: 8px;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            --transition-speed: 0.5s;
+        }
 
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Portal Académico | Glosario Interactivo">
-    <meta name="twitter:description" content="Explora glosarios interactivos por materia con tarjetas de estudio, definiciones y más.">
-    <meta name="twitter:image" content="https://ejemplo.com/assets/images/seo/cover.png">
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--color-background);
+            color: var(--color-text-primary);
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        
+        /* === AJUSTE PARA ESCRITORIO === */
+        .container {
+            width: 95%; /* Usa un porcentaje para ser flexible */
+            max-width: 1200px; /* Ancho máximo en monitores grandes */
+            margin: 0 auto;
+            padding: var(--spacing-medium);
+            flex-grow: 1;
+        }
+        
+        .main-header {
+            background-color: var(--color-surface);
+            padding: var(--spacing-medium);
+            border-bottom: 1px solid var(--color-border);
+            text-align: center;
+        }
+        #class-nav {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: var(--spacing-small);
+            margin-top: var(--spacing-medium);
+        }
+        .class-btn {
+            padding: var(--spacing-small) var(--spacing-medium);
+            border: 1px solid var(--color-border);
+            background-color: var(--color-surface);
+            cursor: pointer;
+            border-radius: var(--border-radius);
+            font-size: 0.9rem;
+            transition: all 0.2s ease-in-out;
+        }
+        .class-btn:hover {
+            background-color: var(--color-primary);
+            color: white;
+            border-color: var(--color-primary);
+        }
+        .class-btn.active {
+            background-color: var(--color-primary);
+            color: white;
+            border-color: var(--color-primary);
+            box-shadow: 0 0 8px rgba(0, 90, 156, 0.4);
+        }
 
-    <link rel="icon" href="assets/images/logo/favicon.ico" type="image/x-icon">
-    <link rel="apple-touch-icon" href="assets/images/logo/logo.png">
+        .welcome-container {
+            text-align: center;
+            padding: var(--spacing-large) var(--spacing-medium);
+            background-color: var(--color-surface);
+            border-radius: var(--border-radius);
+            margin-top: var(--spacing-large);
+            box-shadow: var(--shadow);
+        }
+        .welcome-container h2 {
+            color: var(--color-primary);
+            margin-bottom: var(--spacing-medium);
+        }
 
-    <link rel="stylesheet" href="assets/css/styles.css">
+        .tabs-container {
+            display: flex;
+            border-bottom: 2px solid var(--color-border);
+            margin-bottom: var(--spacing-large);
+            overflow-x: auto;
+        }
+        .tab {
+            padding: var(--spacing-small) var(--spacing-medium);
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-size: 1.1rem;
+            color: var(--color-text-secondary);
+            position: relative;
+            white-space: nowrap;
+        }
+        .tab.active {
+            color: var(--color-primary);
+            font-weight: 600;
+        }
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--color-primary);
+        }
+        .group {
+            margin-bottom: var(--spacing-large);
+            background-color: var(--color-surface);
+            padding: var(--spacing-medium);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+        }
+        .group-title {
+            margin-bottom: var(--spacing-small);
+            border-bottom: 1px solid var(--color-border);
+            padding-bottom: var(--spacing-small);
+        }
+        .group-members {
+            font-style: italic;
+            color: var(--color-text-secondary);
+            margin-bottom: var(--spacing-medium);
+        }
 
-    <script src="assets/js/app.js" defer></script>
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: var(--spacing-medium);
+        }
+        .card {
+            background-color: transparent;
+            height: 250px;
+            perspective: 1500px;
+            border-radius: var(--border-radius);
+        }
+        .card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform var(--transition-speed) ease-in-out;
+            transform-style: preserve-3d;
+        }
+        .card.flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+        .card-front,
+        .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--spacing-medium);
+            background-color: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+        }
+        .card-back {
+            transform: rotateY(180deg);
+        }
+        .card-term-es {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--color-primary);
+            text-align: center;
+        }
+        .card-img-mini {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 2px solid var(--color-border);
+        }
+        .card-actions {
+            display: flex;
+            gap: var(--spacing-small);
+            width: 100%;
+            justify-content: flex-end;
+        }
+        .card-btn {
+            background-color: var(--color-primary-light);
+            color: white;
+            border: none;
+            padding: var(--spacing-small);
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+        .card-back h4 {
+            color: var(--color-primary);
+        }
+        .card-back p {
+            font-size: 0.9rem;
+            text-align: center;
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+
+        .modal-container {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        .modal-container.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+        .modal-content {
+            background-color: var(--color-surface);
+            padding: var(--spacing-large);
+            border-radius: var(--border-radius);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            width: 90%;
+            max-width: 700px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+        .modal-container.visible .modal-content {
+            transform: scale(1);
+        }
+        .modal-close {
+            position: absolute;
+            top: var(--spacing-medium);
+            right: var(--spacing-medium);
+            background: none;
+            border: none;
+            font-size: 1.8rem;
+            cursor: pointer;
+            color: var(--color-text-secondary);
+        }
+        #modal-body {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: var(--spacing-medium);
+        }
+        .modal-img {
+            width: 100%;
+            max-height: 300px;
+            object-fit: cover;
+            border-radius: var(--border-radius);
+        }
+
+        .main-footer {
+            background-color: var(--color-surface);
+            text-align: center;
+            padding: var(--spacing-medium);
+            margin-top: var(--spacing-large);
+            border-top: 1px solid var(--color-border);
+            color: var(--color-text-secondary);
+            font-size: 0.9rem;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .card-inner, .modal-container, .modal-content {
+                transition: none;
+            }
+        }
+        
+        /* === MEDIA QUERIES PARA MEJORAR EXPERIENCIA EN ESCRITORIO === */
+        @media (min-width: 768px) {
+            /* Aumenta el tamaño de la fuente de los botones del menú en pantallas más grandes */
+            .class-btn {
+                font-size: 1rem;
+            }
+            
+            /* Mejora la disposición del modal en pantallas más grandes */
+            #modal-body {
+                grid-template-columns: 200px 1fr;
+                align-items: center;
+            }
+            .modal-img {
+                max-height: 200px;
+            }
+        }
+
+        @media print {
+            body { background-color: white; color: black; }
+            .main-header, .card-actions, .modal-container, .main-footer { display: none !important; }
+            .cards-grid { display: block; }
+            .card {
+                page-break-inside: avoid;
+                box-shadow: none;
+                border: 1px solid #ccc;
+                height: auto;
+                margin-bottom: 20px;
+            }
+            .card-inner, .card-front, .card-back {
+                position: static;
+                transform: none;
+                display: block;
+                backface-visibility: visible;
+                box-shadow: none;
+            }
+        }
+    </style>
 </head>
 <body>
-
-    <header class="site-header">
-        <div class="container site-header__container">
-            <a href="/" class="site-header__logo">
-                <img src="assets/images/logo/logo.png" alt="Logo del Portal Académico">
-            </a>
-            
-            <div class="search-combobox" role="combobox" aria-expanded="false" aria-haspopup="listbox">
-                <input type="text" id="search-input" class="search-combobox__input" placeholder="Buscar materia, grupo o término..." aria-autocomplete="list" aria-controls="search-results">
-                <ul class="search-combobox__results" id="search-results" role="listbox">
-                    </ul>
-                <div id="search-live-region" class="visually-hidden" aria-live="polite" role="status"></div>
-            </div>
-            
-            <nav class="site-header__nav">
-                <a href="#intro">Introducción</a>
-                <a href="#objetivos">Objetivos</a>
-                <a href="#metodologia">Metodología</a>
-            </nav>
-        </div>
+    <header class="main-header">
+        <h1>Glosario Interactivo</h1>
+        <nav id="class-nav"></nav>
     </header>
 
-    <main id="main-content" class="container">
+    <main class="container" id="content-area">
+        </main>
 
-        <noscript>
-            <div class="no-script-warning">
-                <h2>Funcionalidad limitada</h2>
-                <p>Este sitio requiere JavaScript para su interactividad completa. Por favor, actívalo en tu navegador para usar el glosario dinámico.</p>
-                <p>A continuación, se muestra una lista estática de las materias disponibles:</p>
-                <ul>
-                    <li>(N) 2093 Herramientas y Técnicas de Estudio</li>
-                    <li>(N) 2313 Sistemas Operativos I</li>
-                    <li>(N) 2480 Conceptos y métodos matemáticos</li>
-                    <li>(N) 2315 Fundamentos de programación</li>
-                    <li>CONOCE LA U (CAS) 2025-2</li>
-                </ul>
-            </div>
-        </noscript>
+    <footer class="main-footer">
+        <p>&copy; 2025 Glosario Interactivo. Creado por Lucas Molina.</p>
+    </footer>
 
-        <section id="intro" class="content-section">
-            <h2>Introducción al Portal</h2>
-            <p>Este portal es una herramienta de apoyo académico diseñada para facilitar el estudio y la comprensión de términos clave en diversas materias. Utiliza un sistema de tarjetas interactivas (flashcards) para presentar conceptos, definiciones y traducciones de manera visual y organizada.</p>
-        </section>
-
-        <section id="objetivos" class="content-section">
-            <h2>Objetivos del Proyecto</h2>
-            <h3>Objetivo General</h3>
-            <p>Proveer un recurso educativo centralizado y fácil de usar que permita a los estudiantes repasar y consolidar su conocimiento a través de un glosario interactivo por materias.</p>
-            <h3>Objetivos Específicos</h3>
-            <ul>
-                <li>Facilitar el acceso rápido a definiciones y conceptos clave de cada materia.</li>
-                <li>Ofrecer una experiencia de usuario interactiva y atractiva que fomente el aprendizaje.</li>
-                <li>Centralizar el material de estudio en un formato digital, accesible y bien estructurado.</li>
-                <li>Implementar funcionalidades de búsqueda avanzada para una localización eficiente de la información.</li>
-            </ul>
-        </section>
-
-        <section id="metodologia" class="content-section">
-            <h2>Metodología (Protocolo Académico)</h2>
-            <p>El contenido de este portal se organiza jerárquicamente: <strong>Materias → Ventanas → Grupos → Tarjetas</strong>.</p>
-            <ol>
-                <li><strong>Selección de Materia:</strong> Elige una materia del menú principal o utiliza el buscador.</li>
-                <li><strong>Navegación por Ventanas:</strong> Dentro de cada materia, el contenido puede estar segmentado en "ventanas" o pestañas temáticas.</li>
-                <li><strong>Exploración de Grupos:</strong> Cada ventana contiene grupos de estudio, que agrupan tarjetas relacionadas.</li>
-                <li><strong>Interacción con Tarjetas:</strong> Cada tarjeta presenta un término. Puedes girarla para ver su traducción y definiciones, o ampliarla para acceder a más detalles y herramientas como copiar el texto al portapapeles.</li>
-            </ol>
-        </section>
-
-        <div id="dynamic-content-area">
-            <p class="placeholder-text">Selecciona una materia usando el buscador para comenzar.</p>
-        </div>
-
-    </main>
-    
-    <div id="card-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" hidden>
-        <div class="modal__overlay" tabindex="-1"></div>
-        <div class="modal__content">
-            <button id="modal-close-btn" class="modal__close-btn" aria-label="Cerrar ventana">&times;</button>
-            <div id="modal-body">
-                </div>
+    <div id="modal-container" class="modal-container">
+        <div class="modal-content">
+            <button id="modal-close" class="modal-close" aria-label="Cerrar">&times;</button>
+            <div id="modal-body"></div>
         </div>
     </div>
+
+    <script>
+        // === ZONA DE DATOS (JSON Local) ===
+        const glossaryData = {
+            "2093_herramientas": {
+                className: "(N) 2093 Herramientas y Técnicas de Estudio",
+                windows: [{
+                    title: "Teoría",
+                    groups: [{
+                        groupName: "Grupo A: Métodos de Organización",
+                        members: ["Lucas Molina", ""],
+                        tags: [
+                            { es: "Mapa Conceptual", en: "Concept Map", def_es: "Herramienta gráfica para organizar y representar el conocimiento.", def_en: "A graphical tool for organizing and representing knowledge.", img: "https://via.placeholder.com/300x200.png?text=Mapa+Conceptual" },
+                            { es: "Resumen", en: "Summary", def_es: "Escrito que sintetiza las ideas principales de un texto.", def_en: "A text that synthesizes the main ideas of a text.", img: "https://via.placeholder.com/300x200.png?text=Resumen" },
+                            { es: "Ficha de Estudio", en: "Study Card", def_es: "Tarjeta que contiene datos o información clave sobre un tema.", def_en: "A card containing key data or information on a specific topic.", img: "https://via.placeholder.com/300x200.png?text=Ficha" },
+                        ]
+                    }, {
+                        groupName: "Grupo B: Técnicas de Lectura",
+                        members: ["Lucas Molina"],
+                        tags: [
+                            { es: "Lectura Rápida", en: "Speed Reading", def_es: "Métodos para aumentar la velocidad de lectura.", def_en: "Methods to increase reading speed.", img: "https://via.placeholder.com/300x200.png?text=Lectura" },
+                            { es: "Subrayado", en: "Underlining", def_es: "Destacar las partes más importantes de un texto.", def_en: "Highlighting the most important parts of a text.", img: "https://via.placeholder.com/300x200.png?text=Subrayado" },
+                            { es: "Mnemotecnia", en: "Mnemonic", def_es: "Técnica de memorización que asocia ideas con imágenes.", def_en: "A memorization technique that associates ideas with images.", img: "https://via.placeholder.com/300x200.png?text=Mnemotecnia" },
+                        ]
+                    }]
+                }]
+            },
+            "2313_sistemas_operativos": {
+                className: "2313 Sistemas Operativos I",
+                windows: [{
+                    title: "Fundamentos",
+                    groups: [{
+                        groupName: "Grupo A: Gestión de Procesos",
+                        members: ["Carlos Ruiz"],
+                        tags: [
+                            { es: "Proceso", en: "Process", def_es: "Instancia de un programa en ejecución.", def_en: "An instance of a program in execution.", img: "https://via.placeholder.com/300x200.png?text=Proceso" },
+                            { es: "Hilo (Thread)", en: "Thread", def_es: "Unidad de ejecución más pequeña de un proceso.", def_en: "The smallest execution unit of a process.", img: "https://via.placeholder.com/300x200.png?text=Hilo" },
+                            { es: "Deadlock", en: "Deadlock", def_es: "Bloqueo mutuo entre dos o más procesos.", def_en: "Mutual blocking between two or more processes.", img: "https://via.placeholder.com/300x200.png?text=Deadlock" },
+                        ]
+                    }, {
+                        groupName: "Grupo B: Memoria",
+                        members: ["Sofía Luna"],
+                        tags: [
+                            { es: "Memoria Virtual", en: "Virtual Memory", def_es: "Abstracción de la memoria física del sistema.", def_en: "Abstraction of the system's physical memory.", img: "https://via.placeholder.com/300x200.png?text=Memoria" },
+                            { es: "Paginación", en: "Paging", def_es: "Técnica de gestión de memoria.", def_en: "A memory management technique.", img: "https://via.placeholder.com/300x200.png?text=Paginación" },
+                            { es: "Fragmentación", en: "Fragmentation", def_es: "Espacio de memoria desperdiciado.", def_en: "Wasted memory space.", img: "https://via.placeholder.com/300x200.png?text=Fragmentación" },
+                        ]
+                    }]
+                }]
+            },
+            "2480_conceptos_matematicos": {
+            className: "2480 Conceptos y métodos matemáticos",
+            windows: [{
+                title: "Conceptos Fundamentales",
+                groups: [{
+                    groupName: "Glosario Esencial de Matemáticas",
+                    members: ["Lucas Molina"],
+                    tags: [
+                        { es: "Algoritmo", en: "Algorithm", def_es: "Un conjunto de reglas o pasos definidos para resolver un problema o realizar un cálculo.", def_en: "A set of defined rules or steps to solve a problem or perform a calculation.", img: "https://via.placeholder.com/300x200.png?text=Algoritmo" },
+                        { es: "Variable", en: "Variable", def_es: "Un símbolo que representa un valor que puede cambiar o es desconocido.", def_en: "A symbol that represents a value that can change or is unknown.", img: "https://via.placeholder.com/300x200.png?text=Variable" },
+                        { es: "Constante", en: "Constant", def_es: "Un valor fijo que no cambia dentro de un problema o expresión matemática.", def_en: "A fixed value that does not change within a mathematical problem or expression.", img: "https://via.placeholder.com/300x200.png?text=Constante" },
+                        { es: "Coeficiente", en: "Coefficient", def_es: "El número que multiplica a una variable en una expresión algebraica.", def_en: "The number that multiplies a variable in an algebraic expression.", img: "https://via.placeholder.com/300x200.png?text=Coeficiente" },
+                        { es: "Ecuación", en: "Equation", def_es: "Una igualdad matemática que establece que dos expresiones son iguales y contiene al menos una incógnita.", def_en: "A mathematical statement that two expressions are equal and contains at least one unknown.", img: "https://via.placeholder.com/300x200.png?text=Ecuación" },
+                        { es: "Función", en: "Function", def_es: "Una relación donde a cada entrada (dominio) le corresponde una única salida (rango).", def_en: "A relation where each input (domain) corresponds to a single output (range).", img: "https://via.placeholder.com/300x200.png?text=Función" },
+                        { es: "Dominio", en: "Domain", def_es: "El conjunto completo de todos los valores de entrada posibles para una función.", def_en: "The complete set of all possible input values for a function.", img: "https://via.placeholder.com/300x200.png?text=Dominio" },
+                        { es: "Rango", en: "Range", def_es: "El conjunto completo de todos los valores de salida que una función puede producir.", def_en: "The complete set of all output values that a function can produce.", img: "https://via.placeholder.com/300x200.png?text=Rango" },
+                        { es: "Axioma", en: "Axiom", def_es: "Una afirmación que se considera verdadera y se acepta sin necesidad de demostración.", def_en: "A statement that is considered true and accepted without proof.", img: "https://via.placeholder.com/300x200.png?text=Axioma" },
+                        { es: "Teorema", en: "Theorem", def_es: "Una proposición matemática que ha sido demostrada lógicamente a partir de axiomas.", def_en: "A mathematical proposition that has been logically proven from axioms.", img: "https://via.placeholder.com/300x200.png?text=Teorema" },
+                        { es: "Vector", en: "Vector", def_es: "Un objeto que posee magnitud (longitud o tamaño) y dirección.", def_en: "An object that has both magnitude (length or size) and direction.", img: "https://via.placeholder.com/300x200.png?text=Vector" },
+                        { es: "Matriz", en: "Matrix", def_es: "Un arreglo rectangular de números organizados en filas y columnas.", def_en: "A rectangular array of numbers arranged in rows and columns.", img: "https://via.placeholder.com/300x200.png?text=Matriz" },
+                        { es: "Derivada", en: "Derivative", def_es: "Mide la tasa de cambio instantánea de una función; la pendiente de la tangente a la curva.", def_en: "Measures the instantaneous rate of change of a function; the slope of the tangent to the curve.", img: "https://via.placeholder.com/300x200.png?text=Derivada" },
+                        { es: "Integral", en: "Integral", def_es: "La operación inversa a la derivación; representa el área bajo una curva.", def_en: "The inverse operation to differentiation; represents the area under a curve.", img: "https://via.placeholder.com/300x200.png?text=Integral" },
+                        { es: "Media", en: "Mean", def_es: "El valor promedio de un conjunto de datos.", def_en: "The average value of a data set.", img: "https://via.placeholder.com/300x200.png?text=Media" },
+                        { es: "Mediana", en: "Median", def_es: "El valor central en un conjunto de datos ordenados.", def_en: "The central value in an ordered data set.", img: "https://via.placeholder.com/300x200.png?text=Mediana" },
+                        { es: "Moda", en: "Mode", def_es: "El valor que aparece con mayor frecuencia en un conjunto de datos.", def_en: "The value that appears most frequently in a data set.", img: "https://via.placeholder.com/300x200.png?text=Moda" },
+                        { es: "Probabilidad", en: "Probability", def_es: "Una medida numérica (entre 0 y 1) de la posibilidad de que ocurra un evento.", def_en: "A numerical measure (between 0 and 1) of the likelihood of an event occurring.", img: "https://via.placeholder.com/300x200.png?text=Probabilidad" },
+                        { es: "Factorial (!)", en: "Factorial (!)", def_es: "El producto de todos los enteros positivos desde 1 hasta un número dado.", def_en: "The product of all positive integers from 1 up to a given number.", img: "https://via.placeholder.com/300x200.png?text=Factorial" },
+                        { es: "Permutación", en: "Permutation", def_es: "Un arreglo de objetos en un orden específico; el orden importa.", def_en: "An arrangement of objects in a specific order; the order matters.", img: "https://via.placeholder.com/300x200.png?text=Permutación" },
+                    ]
+                }]
+            }]
+        },
+            "2315_fundamentos_programacion": {
+            className: "2315 Fundamentos de programación",
+            windows: [{
+                title: "Lógica y Estructuras",
+                groups: [{
+                    groupName: "Grupo A: Conceptos Fundamentales",
+                    members: ["Lucas Molina", ""],
+                    tags: [
+                        { es: "Algoritmo", en: "Algorithm", def_es: "Secuencia de pasos finitos para resolver un problema.", def_en: "A sequence of finite steps to solve a problem.", img: "https://via.placeholder.com/300x200.png?text=Algoritmo" },
+                        { es: "Variable", en: "Variable", def_es: "Espacio en memoria para almacenar un valor que puede cambiar.", def_en: "A memory space to store a value that can change.", img: "https://via.placeholder.com/300x200.png?text=Variable" },
+                        { es: "Constante", en: "Constant", def_es: "Valor que no puede ser alterado durante la ejecución.", def_en: "A value that cannot be altered during execution.", img: "https://via.placeholder.com/300x200.png?text=Constante" },
+                    ]
+                }, {
+                    groupName: "Grupo B: Estructuras de Control",
+                    members: ["Lucas Molina"],
+                    tags: [
+                        { es: "Bucle (Loop)", en: "Loop", def_es: "Estructura que repite un bloque de código.", def_en: "A structure that repeats a block of code.", img: "https://via.placeholder.com/300x200.png?text=Bucle" },
+                        { es: "Condicional", en: "Conditional", def_es: "Ejecuta código basado en si una condición es verdadera o falsa.", def_en: "Executes code based on whether a condition is true or false.", img: "https://via.placeholder.com/300x200.png?text=Condicional" },
+                        { es: "Función", en: "Function", def_es: "Bloque de código reutilizable que realiza una tarea específica.", def_en: "A reusable block of code that performs a specific task.", img: "https://via.placeholder.com/300x200.png?text=Función" },
+                    ]
+                }]
+            }, {
+                title: "Tecnologías Java y Web",
+                groups: [{
+                    groupName: "Grupo C: Ecosistema Java",
+                    members: ["Lucas Molina"],
+                    tags: [
+                        { es: "Java", en: "Java", def_es: "Un lenguaje de programación de alto nivel, orientado a objetos y de propósito general. Es conocido por su portabilidad (escribir una vez, ejecutar en cualquier lugar).", def_en: "A high-level, object-oriented, general-purpose programming language. Known for its portability (write once, run anywhere).", img: "https://via.placeholder.com/300x200.png?text=Java" },
+                        { es: "JDK", en: "Java Development Kit", def_es: "Un conjunto de herramientas de software que se utiliza para desarrollar aplicaciones Java. Incluye el JRE, compilador y depurador.", def_en: "A software toolkit used to develop Java applications. It includes the JRE, compiler, and debugger.", img: "https://via.placeholder.com/300x200.png?text=JDK" },
+                        { es: "JRE", en: "Java Runtime Environment", def_es: "Conjunto de software que proporciona las bibliotecas y la JVM para ejecutar aplicaciones Java.", def_en: "A set of software tools that provides the libraries and the JVM to run Java applications.", img: "https://via.placeholder.com/300x200.png?text=JRE" },
+                        { es: "JVM", en: "Java Virtual Machine", def_es: "Una máquina virtual que permite a una computadora ejecutar programas Java. Actúa como capa de abstracción entre el código y el S.O.", def_en: "A virtual machine that allows a computer to run Java programs. It acts as an abstraction layer between the code and the OS.", img: "https://via.placeholder.com/300x200.png?text=JVM" },
+                        { es: "JAR", en: "Java Archive", def_es: "Un formato de archivo para empaquetar clases de Java, metadatos e imágenes en un solo archivo para su distribución.", def_en: "A file format to package Java classes, metadata, and images into a single file for distribution.", img: "https://via.placeholder.com/300x200.png?text=JAR" },
+                        { es: "JIT Compilation", en: "Just-In-Time Compilation", def_es: "Técnica usada por la JVM para mejorar el rendimiento, compilando el bytecode a código nativo en tiempo de ejecución.", def_en: "A technique used by the JVM to improve performance by compiling bytecode to native machine code at runtime.", img: "https://via.placeholder.com/300x200.png?text=JIT" },
+                        { es: "JShell", en: "JShell", def_es: "Una herramienta interactiva de línea de comandos para aprender y crear prototipos de código Java.", def_en: "An interactive command-line tool for learning and prototyping Java code.", img: "https://via.placeholder.com/300x200.png?text=JShell" },
+                    ]
+                }, {
+                    groupName: "Grupo D: Tecnologías Web",
+                    members: ["Equipo Web"],
+                    tags: [
+                        { es: "JavaScript", en: "JavaScript", def_es: "Lenguaje de programación de alto nivel, interpretado y dinámico, esencial para crear páginas web interactivas.", def_en: "A high-level, interpreted, and dynamic programming language, essential for creating interactive web pages.", img: "https://via.placeholder.com/300x200.png?text=JavaScript" },
+                        { es: "JSON", en: "JavaScript Object Notation", def_es: "Un formato de texto ligero para el intercambio de datos, fácil de leer para humanos y de procesar para máquinas.", def_en: "A lightweight text-based format for data interchange, easy for humans to read and for machines to parse.", img: "https://via.placeholder.com/300x200.png?text=JSON" },
+                        { es: "jQuery", en: "jQuery", def_es: "Una biblioteca de JavaScript rápida y pequeña que simplifica la manipulación de HTML, manejo de eventos y Ajax.", def_en: "A fast, small, and feature-rich JavaScript library that simplifies HTML manipulation, event handling, and Ajax.", img: "https://via.placeholder.com/300x200.png?text=jQuery" },
+                    ]
+                }]
+            }, {
+                title: "Conceptos con 'K'",
+                groups: [{
+                    groupName: "Grupo E: Palabras Clave",
+                    members: ["Lucas Molina"],
+                    tags: [
+                        { es: "Keyword (Palabra clave)", en: "Keyword", def_es: "Una palabra reservada por un lenguaje de programación con un significado especial. No se puede usar como nombre de variable.", def_en: "A word reserved by a programming language with a special meaning. It cannot be used as a variable name.", img: "https://via.placeholder.com/300x200.png?text=Keyword" },
+                        { es: "Kernel", en: "Kernel", def_es: "El núcleo de un sistema operativo, gestiona los recursos del sistema y la comunicación entre hardware y software.", def_en: "The core of an operating system, managing system resources and communication between hardware and software.", img: "https://via.placeholder.com/300x200.png?text=Kernel" },
+                        { es: "Key (Clave)", en: "Key", def_es: "En estructuras de datos, es un identificador único asociado a un valor para su recuperación eficiente.", def_en: "In data structures, it's a unique identifier associated with a value for efficient retrieval.", img: "https://via.placeholder.com/300x200.png?text=Key" },
+                        { es: "KISS", en: "Keep It Simple, Stupid", def_es: "Un principio de diseño que aboga por la simplicidad en el código, sosteniendo que los sistemas funcionan mejor si no son complicados.", def_en: "A design principle that advocates for simplicity in code, stating that systems work best if they are kept simple.", img: "https://via.placeholder.com/300x200.png?text=KISS" },
+                        { es: "Kotlin", en: "Kotlin", def_es: "Un lenguaje de programación moderno que se ejecuta en la JVM. Es conciso, seguro e interoperable con Java. Preferido para Android.", def_en: "A modern programming language that runs on the JVM. It's concise, safe, and interoperable with Java. Preferred for Android.", img: "https://via.placeholder.com/300x200.png?text=Kotlin" },
+                    ]
+                }, {
+                    groupName: "Grupo F: Otros Términos",
+                    members: ["Lucas Molina"],
+                     tags: [
+                        { es: "K&R", en: "Kernighan and Ritchie", def_es: "Se refiere a Brian Kernighan y Dennis Ritchie, autores del influyente libro 'The C Programming Language'.", def_en: "Refers to Brian Kernighan and Dennis Ritchie, authors of the influential book 'The C Programming Language'.", img: "https://via.placeholder.com/300x200.png?text=K&R" },
+                        { es: "Key-Value Pair", en: "Key-Value Pair", def_es: "Un conjunto de dos datos vinculados: una clave (identificador único) y un valor. Estructura fundamental de diccionarios/mapas.", def_en: "A set of two linked data items: a key (unique identifier) and a value. The fundamental structure of dictionaries/maps.", img: "https://via.placeholder.com/300x200.png?text=Key-Value" },
+                        { es: "Kilobyte (KB)", en: "Kilobyte (KB)", def_es: "Una unidad de medida de almacenamiento de datos digitales que equivale a 1024 bytes.", def_en: "A unit of digital data storage measurement equal to 1024 bytes.", img: "https://via.placeholder.com/300x200.png?text=Kilobyte" },
+                        { es: "Keystroke", en: "Keystroke", def_es: "La acción de presionar una tecla en el teclado. Es un evento común en la programación de interfaces de usuario.", def_en: "The action of pressing a key on the keyboard. It is a common event in user interface programming.", img: "https://via.placeholder.com/300x200.png?text=Keystroke" },
+                        { es: "Knowledge Base", en: "Knowledge Base", def_es: "En IA, es una tecnología que almacena información compleja utilizada por un sistema informático.", def_en: "In AI, it is a technology that stores complex information used by a computer system.", img: "https://via.placeholder.com/300x200.png?text=Knowledge+Base" },
+                    ]
+                }]
+            }]
+        },
+             "2316_teorias_informatica": {
+                className: "2316 Teorías de la Ingeniería Informática",
+                windows: [{
+                    title: "Paradigmas",
+                    groups: [{
+                        groupName: "Grupo A: Abstracción",
+                        members: ["Isabel Díaz"],
+                        tags: [
+                            { es: "Abstracción", en: "Abstraction", def_es: "Ocultar detalles complejos y mostrar solo la funcionalidad esencial.", def_en: "Hiding complex details and showing only the essential functionality.", img: "https://via.placeholder.com/300x200.png?text=Abstracción" },
+                            { es: "Encapsulamiento", en: "Encapsulation", def_es: "Agrupar datos y los métodos que operan sobre ellos en una unidad.", def_en: "Bundling data and the methods that operate on it into a single unit.", img: "https://via.placeholder.com/300x200.png?text=Encapsulamiento" },
+                            { es: "Polimorfismo", en: "Polymorphism", def_es: "Capacidad de un objeto para tomar muchas formas.", def_en: "The ability of an object to take on many forms.", img: "https://via.placeholder.com/300x200.png?text=Polimorfismo" },
+                        ]
+                    }, {
+                        groupName: "Grupo B: Conceptos",
+                        members: ["Roberto Sanz"],
+                        tags: [
+                            { es: "Herencia", en: "Inheritance", def_es: "Mecanismo para basar un objeto o clase en otro objeto o clase.", def_en: "Mechanism for basing an object or class on another object or class.", img: "https://via.placeholder.com/300x200.png?text=Herencia" },
+                            { es: "Clase", en: "Class", def_es: "Plantilla para crear objetos.", def_en: "A blueprint for creating objects.", img: "https://via.placeholder.com/300x200.png?text=Clase" },
+                            { es: "Objeto", en: "Object", def_es: "Instancia de una clase.", def_en: "An instance of a class.", img: "https://via.placeholder.com/300x200.png?text=Objeto" },
+                        ]
+                    }]
+                }]
+            },
+            "conoce_la_u": {
+                className: "CONOCE LA U (CAS) 2025-2",
+                windows: [{
+                    title: "Vida Universitaria",
+                    groups: [{
+                        groupName: "Grupo A: Conceptos Académicos",
+                        members: ["Equipo CAS"],
+                        tags: [
+                            { es: "Crédito Académico", en: "Academic Credit", def_es: "Unidad de medida del trabajo académico del estudiante.", def_en: "Unit of measurement for student academic work.", img: "https://via.placeholder.com/300x200.png?text=Crédito" },
+                            { es: "Sílabo", en: "Syllabus", def_es: "Documento que describe el plan de una asignatura.", def_en: "A document that outlines the plan for a course.", img: "https://via.placeholder.com/300x200.png?text=Sílabo" },
+                            { es: "Matrícula", en: "Enrollment", def_es: "Proceso de inscripción oficial en un período académico.", def_en: "The process of official registration for an academic period.", img: "https://via.placeholder.com/300x200.png?text=Matrícula" },
+                        ]
+                    }, {
+                        groupName: "Grupo B: Servicios",
+                        members: ["Bienestar U."],
+                        tags: [
+                            { es: "Biblioteca", en: "Library", def_es: "Centro de recursos para el aprendizaje y la investigación.", def_en: "A resource center for learning and research.", img: "https://via.placeholder.com/300x200.png?text=Biblioteca" },
+                            { es: "Bienestar Universitario", en: "University Welfare", def_es: "Apoyo al desarrollo integral de la comunidad.", def_en: "Support for the integral development of the community.", img: "https://via.placeholder.com/300x200.png?text=Bienestar" },
+                            { es: "Registro Académico", en: "Academic Registry", def_es: "Oficina que gestiona los expedientes estudiantiles.", def_en: "The office that manages student records.", img: "https://via.placeholder.com/300x200.png?text=Registro" },
+                        ]
+                    }]
+                }]
+            }
+        };
+
+        // === SELECCIÓN DE ELEMENTOS DEL DOM ===
+        const classNav = document.getElementById('class-nav');
+        const contentArea = document.getElementById('content-area');
+        const modalContainer = document.getElementById('modal-container');
+        const modalBody = document.getElementById('modal-body');
+        const modalClose = document.getElementById('modal-close');
+
+        // === FUNCIONES DE RENDERIZADO ===
+        function renderWelcomeMessage() {
+            contentArea.innerHTML = `
+                <div class="welcome-container">
+                    <h2>¡Bienvenido al Glosario Interactivo!</h2>
+                    <p>Por favor, selecciona una materia del menú superior para comenzar a explorar las tarjetas de estudio.</p>
+                </div>
+            `;
+        }
+
+        function renderClassContent(classKey) {
+            const classData = glossaryData[classKey];
+            if (!classData) return;
+
+            const tabsHTML = classData.windows.map((window, index) =>
+                `<button class="tab ${index === 0 ? 'active' : ''}" data-window-index="${index}">${window.title}</button>`
+            ).join('');
+
+            const groupsHTML = classData.windows.map((window, windowIndex) =>
+                window.groups.map(group => `
+                    <div class="group" style="display: ${windowIndex === 0 ? 'block' : 'none'}" data-window-index="${windowIndex}">
+                        <h3 class="group-title">${group.groupName}</h3>
+                        <p class="group-members">Integrantes: ${group.members.join(', ')}</p>
+                        <div class="cards-grid">
+                            ${group.tags.map(tag => renderCard(tag)).join('')}
+                        </div>
+                    </div>
+                `).join('')
+            ).join('');
+
+            contentArea.innerHTML = `
+                <div class="tabs-container">${tabsHTML}</div>
+                <div class="groups-container">${groupsHTML}</div>
+            `;
+        }
+
+        function renderCard(tag) {
+            const tagData = encodeURIComponent(JSON.stringify(tag));
+            return `
+                <div class="card" aria-label="Tarjeta para ${tag.es}">
+                    <div class="card-inner">
+                        <div class="card-front">
+                            <h3 class="card-term-es">${tag.es}</h3>
+                            <img src="${tag.img}" alt="${tag.es}" class="card-img-mini" loading="lazy">
+                            <div class="card-actions">
+                                <button class="card-btn btn-flip">Girar</button>
+                                <button class="card-btn btn-expand" data-tag='${tagData}'>Expandir</button>
+                            </div>
+                        </div>
+                        <div class="card-back">
+                            <div>
+                                <h4>${tag.en}</h4>
+                                <p><b>ES:</b> ${tag.def_es}</p>
+                                <p><b>EN:</b> ${tag.def_en}</p>
+                            </div>
+                            <div class="card-actions">
+                                <button class="card-btn btn-flip">Girar</button>
+                                <button class="card-btn btn-expand" data-tag='${tagData}'>Expandir</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // === MANEJO DE EVENTOS ===
+        function handleContentClick(e) {
+            const target = e.target;
+            if (target.classList.contains('btn-flip')) {
+                target.closest('.card').classList.toggle('flipped');
+            }
+            if (target.classList.contains('btn-expand')) {
+                const tagData = JSON.parse(decodeURIComponent(target.dataset.tag));
+                openModal(tagData);
+            }
+            if (target.classList.contains('tab')) {
+                const windowIndex = target.dataset.windowIndex;
+                contentArea.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                target.classList.add('active');
+                contentArea.querySelectorAll('.group').forEach(g => g.style.display = 'none');
+                contentArea.querySelectorAll(`.group[data-window-index="${windowIndex}"]`).forEach(g => g.style.display = 'block');
+            }
+        }
+
+        function openModal(tag) {
+            modalBody.innerHTML = `
+                <img src="${tag.img}" alt="${tag.es}" class="modal-img">
+                <div>
+                    <h3>${tag.es} <span style="color: var(--color-text-secondary); font-weight: normal;">/ ${tag.en}</span></h3>
+                    <h4>Definición (ES)</h4>
+                    <p>${tag.def_es}</p>
+                    <h4>Definition (EN)</h4>
+                    <p>${tag.def_en}</p>
+                </div>
+            `;
+            modalContainer.classList.add('visible');
+        }
+
+        function closeModal() {
+            modalContainer.classList.remove('visible');
+        }
+
+        // === INICIALIZACIÓN ===
+        function init() {
+            classNav.innerHTML = Object.keys(glossaryData).map(key =>
+                `<button class="class-btn" data-class-key="${key}">${glossaryData[key].className}</button>`
+            ).join('');
+
+            classNav.querySelectorAll('.class-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    classNav.querySelectorAll('.class-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    renderClassContent(btn.dataset.classKey);
+                });
+            });
+
+            contentArea.addEventListener('click', handleContentClick);
+            modalClose.addEventListener('click', closeModal);
+            modalContainer.addEventListener('click', (e) => {
+                if (e.target === modalContainer) closeModal();
+            });
+
+            // Muestra el mensaje de bienvenida al cargar la página
+            renderWelcomeMessage();
+        }
+
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
 </body>
 </html>
