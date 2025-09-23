@@ -1,476 +1,458 @@
-/* ==========================================================================
-   1. VARIABLES CSS
-   ========================================================================== */
+/*
+=================================================================================================
+VARIABLES CSS - EDITA LA PALETA DE COLORES, FUENTES Y TAMAÑOS AQUÍ
+=================================================================================================
+*/
 :root {
-  /* Paleta de colores */
-  --color-primary: #005f73;
-  --color-secondary: #0a9396;
-  --color-accent: #94d2bd;
-  --color-text: #333;
-  --color-text-inverse: #f4f4f9;
-  --color-background: #e9ecef;
-  --color-card-front: #ffffff;
-  --color-card-back: #e9ecef;
-  --color-shadow: rgba(0, 0, 0, 0.1);
-  --color-border: rgba(0, 0, 0, 0.05);
-
-  /* Tipografía */
-  --font-family-primary: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  --font-size-base: 16px;
-  --font-size-small: 0.875rem;
-  --font-size-large: 1.25rem;
-
-  /* Espaciado */
-  --space-unit: 8px;
-  --space-1: var(--space-unit);
-  --space-2: calc(var(--space-unit) * 2);
-  --space-3: calc(var(--space-unit) * 3);
-
-  /* Bordes y sombras */
-  --border-radius: 8px;
-  --box-shadow: 0 4px 6px var(--color-shadow);
-  --transition-speed: 0.5s;
-}
-
-/* ==========================================================================
-   2. ESTILOS BASE Y UTILIDADES
-   ========================================================================== */
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+    --color-primary: #005A9C;
+    --color-secondary: #00A6D6;
+    --color-accent: #FFC72C;
+    --color-text-dark: #333;
+    --color-text-light: #f4f4f4;
+    --color-background-light: #f0f2f5;
+    --color-card-front: #fff;
+    --color-card-back: #f9f9f9;
+    --shadow-base: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --border-radius: 8px;
+    --transition-speed: 0.3s;
+    --font-family-body: 'Arial', sans-serif;
+    --font-family-heading: 'Helvetica', sans-serif;
 }
 
 body {
-  font-family: var(--font-family-primary);
-  font-size: var(--font-size-base);
-  line-height: 1.6;
-  color: var(--color-text);
-  background-color: var(--color-background);
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
+    font-family: var(--font-family-body);
+    color: var(--color-text-dark);
+    line-height: 1.6;
+    background-color: var(--color-background-light);
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
 }
+
+/*
+=================================================================================================
+ESTRUCTURA GENERAL Y COMPONENTES
+=================================================================================================
+*/
+
+.site-container {
+    max-width: 1200px;
+    width: 100%;
+    padding: 20px;
+}
+
+.section {
+    padding: 40px;
+    background: var(--color-card-front);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-base);
+    margin-bottom: 20px;
+}
+
+.main-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--color-primary);
+    color: var(--color-text-light);
+    padding: 1rem 2rem;
+    border-radius: var(--border-radius);
+    margin-bottom: 20px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.main-header__logo img {
+    height: 50px;
+    transition: transform var(--transition-speed);
+}
+.main-header__logo img:hover {
+    transform: scale(1.05);
+}
+
+.main-header__search {
+    flex-grow: 1;
+    margin: 0 2rem;
+    max-width: 600px;
+}
+
+.autocomplete-container {
+    position: relative;
+}
+
+#search-input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border-radius: 50px;
+    border: none;
+    font-size: 1rem;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+}
+
+#autocomplete-list {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 99;
+    background-color: var(--color-card-front);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-base);
+    list-style: none;
+    margin: 0.5rem 0 0 0;
+    padding: 0;
+    max-height: 300px;
+    overflow-y: auto;
+    display: none;
+}
+#autocomplete-list[aria-expanded="true"] {
+    display: block;
+}
+
+#autocomplete-list li {
+    padding: 10px 15px;
+    cursor: pointer;
+}
+#autocomplete-list li:hover, #autocomplete-list li.is-active {
+    background-color: var(--color-background-light);
+}
+
+.main-header__nav a {
+    color: var(--color-text-light);
+    text-decoration: none;
+    margin-left: 1.5rem;
+    font-weight: bold;
+    transition: color var(--transition-speed);
+}
+.main-header__nav a:hover {
+    color: var(--color-accent);
+}
+
+/*
+=================================================================================================
+ESTILOS DE LA PLANTILLA DE MATERIA
+=================================================================================================
+*/
+
+.materia-header {
+    background: var(--color-secondary);
+    color: var(--color-text-light);
+    padding: 2rem;
+    border-radius: var(--border-radius);
+    margin-bottom: 20px;
+    text-align: center;
+}
+.materia-header h1 {
+    font-size: 2.5rem;
+    margin: 0;
+}
+.materia-header p {
+    font-size: 1.1rem;
+    opacity: 0.9;
+}
+
+.materia__tabs {
+    display: flex;
+    justify-content: flex-start;
+    border-bottom: 2px solid var(--color-primary);
+    margin-bottom: 20px;
+}
+
+.materia__tab-button {
+    background: transparent;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: bold;
+    color: var(--color-text-dark);
+    transition: background-color var(--transition-speed);
+}
+
+.materia__tab-button[aria-selected="true"] {
+    background-color: var(--color-primary);
+    color: var(--color-text-light);
+    border-radius: var(--border-radius) var(--border-radius) 0 0;
+}
+
+.materia__tab-content {
+    display: none;
+}
+.materia__tab-content[aria-hidden="false"] {
+    display: block;
+}
+
+.group-section {
+    margin-bottom: 2rem;
+}
+.group-section__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--color-background-light);
+    padding: 10px 20px;
+    border-radius: var(--border-radius);
+    margin-bottom: 1rem;
+}
+
+.group-section__cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+/*
+=================================================================================================
+ESTILOS DE LA TARJETA (CARD)
+=================================================================================================
+*/
+
+.card {
+    position: relative;
+    width: 100%;
+    height: 350px;
+    transform-style: preserve-3d;
+    transition: transform 0.6s;
+    cursor: pointer;
+    box-shadow: var(--shadow-base);
+    border-radius: var(--border-radius);
+}
+
+.card--flipped {
+    transform: rotateY(180deg);
+}
+
+.card-face {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    border-radius: var(--border-radius);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.card-front {
+    background-color: var(--color-card-front);
+    z-index: 2;
+}
+.card-front__word {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+.card-front__thumbnail {
+    width: 80px;
+    height: auto;
+    display: block;
+    margin: auto;
+}
+
+.card-back {
+    background-color: var(--color-card-back);
+    transform: rotateY(180deg);
+    padding: 20px;
+    text-align: center;
+}
+.card-back__word {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: var(--color-primary);
+}
+.card-back__image {
+    max-width: 100%;
+    max-height: 150px;
+    height: auto;
+    margin: 10px 0;
+    border-radius: 4px;
+}
+.card-back__def-es, .card-back__def-en {
+    font-size: 0.9rem;
+    margin-top: 5px;
+}
+.card-back__def-en {
+    font-style: italic;
+    color: var(--color-secondary);
+}
+
+.card__controls {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+    justify-content: center;
+}
+.card__btn {
+    background-color: var(--color-primary);
+    color: var(--color-text-light);
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color var(--transition-speed);
+}
+.card__btn:hover {
+    background-color: var(--color-secondary);
+}
+
+/*
+=================================================================================================
+MODAL
+=================================================================================================
+*/
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    justify-content: center;
+    align-items: center;
+}
+
+.modal--open {
+    display: flex;
+}
+
+.modal-content {
+    background: var(--color-card-front);
+    padding: 2rem;
+    border-radius: var(--border-radius);
+    position: relative;
+    max-width: 800px;
+    width: 90%;
+    box-shadow: var(--shadow-base);
+}
+
+.modal__close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 2rem;
+    cursor: pointer;
+    color: var(--color-text-dark);
+}
+.modal__close::before {
+    content: "×";
+}
+
+.modal-body {
+    text-align: center;
+}
+.modal-body__img {
+    max-width: 100%;
+    height: auto;
+    margin-bottom: 20px;
+    border-radius: var(--border-radius);
+}
+.modal-body__word-es {
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--color-primary);
+}
+.modal-body__word-en {
+    font-size: 1.5rem;
+    font-style: italic;
+    color: var(--color-secondary);
+}
+.modal-body__def {
+    margin-top: 1rem;
+}
+
+.modal-body__controls {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+.modal-body__btn {
+    padding: 10px 20px;
+    border-radius: 50px;
+    border: 1px solid var(--color-primary);
+    background-color: transparent;
+    color: var(--color-primary);
+    cursor: pointer;
+    transition: all var(--transition-speed);
+}
+.modal-body__btn:hover {
+    background-color: var(--color-primary);
+    color: var(--color-text-light);
+}
+
+/*
+=================================================================================================
+ACCESIBILIDAD Y RESPONSIVE DESIGN
+=================================================================================================
+*/
 
 .visually-hidden {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  margin: -1px;
-  padding: 0;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  border: 0;
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
 }
 
-/* ==========================================================================
-   3. LAYOUT GENERAL
-   ========================================================================== */
-.main-content {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: var(--space-3) var(--space-2);
-  flex-grow: 1;
-}
-
-.content-section {
-  margin-bottom: var(--space-3);
-  padding: var(--space-2);
-  background-color: var(--color-card-front);
-  border-radius: var(--border-radius);
-  box-shadow: var(--box-shadow);
-}
-
-.content-section__title {
-  color: var(--color-primary);
-  margin-bottom: var(--space-2);
-  border-bottom: 2px solid var(--color-accent);
-  padding-bottom: var(--space-1);
-}
-
-/* ==========================================================================
-   4. HEADER Y NAVEGACIÓN
-   ========================================================================== */
-.header {
-  background-color: var(--color-primary);
-  color: var(--color-text-inverse);
-  padding: var(--space-2) var(--space-2);
-  box-shadow: var(--box-shadow);
-  position: sticky; /* Se puede usar 'fixed' si se prefiere */
-  top: 0;
-  z-index: 1000;
-}
-
-.header__content {
-  max-width: 1200px;
-  margin: 0 auto;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: var(--space-2);
-  flex-wrap: wrap; /* Para un mejor manejo en dispositivos pequeños */
-}
-
-.header__logo {
-  color: var(--color-text-inverse);
-  text-decoration: none;
-  font-weight: bold;
-  font-size: var(--font-size-large);
-}
-
-.header__nav {
-  flex-grow: 1;
-  display: flex;
-  justify-content: flex-end;
-}
-
-.header__menu {
-  list-style: none;
-  display: flex;
-  gap: var(--space-2);
-  margin-right: var(--space-2);
-}
-
-.header__link {
-  color: var(--color-text-inverse);
-  text-decoration: none;
-  padding: var(--space-1);
-  border-radius: var(--border-radius);
-  transition: background-color 0.3s ease;
-}
-
-.header__link:hover, .header__link:focus {
-  background-color: rgba(255, 255, 255, 0.2);
-}
-
-/* Autocomplete */
-.autocomplete-container {
-  position: relative;
-  width: 100%;
-  max-width: 300px;
-}
-
-.autocomplete__input {
-  width: 100%;
-  padding: var(--space-1);
-  border: none;
-  border-radius: var(--border-radius);
-  font-size: var(--font-size-base);
-}
-
-.autocomplete__list {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  right: 0;
-  background-color: var(--color-card-front);
-  border: 1px solid var(--color-border);
-  border-top: none;
-  border-radius: 0 0 var(--border-radius) var(--border-radius);
-  box-shadow: var(--box-shadow);
-  z-index: 1001;
-  list-style: none;
-  max-height: 200px;
-  overflow-y: auto;
-}
-
-.autocomplete__item {
-  padding: var(--space-1) var(--space-2);
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-
-.autocomplete__item:hover, .autocomplete__item--active {
-  background-color: var(--color-accent);
-}
-
-/* ==========================================================================
-   5. PLANTILLA DE MATERIA
-   ========================================================================== */
-.subject-area {
-  min-height: 50vh; /* Para que el contenido sea visible */
-  display: flex;
-  flex-direction: column;
-}
-
-.subject__header {
-  padding: var(--space-2);
-  background-color: var(--color-secondary);
-  color: var(--color-text-inverse);
-  border-radius: var(--border-radius);
-  margin-bottom: var(--space-2);
-}
-
-.subject__title {
-  font-size: 2rem;
-  margin-bottom: var(--space-1);
-}
-
-.subject__description {
-  font-size: var(--font-size-large);
-}
-
-.groups-container {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
-}
-
-.group {
-  background-color: var(--color-card-front);
-  padding: var(--space-2);
-  border-radius: var(--border-radius);
-  box-shadow: var(--box-shadow);
-}
-
-.group__title {
-  border-bottom: 2px solid var(--color-accent);
-  padding-bottom: var(--space-1);
-  margin-bottom: var(--space-2);
-  color: var(--color-primary);
-}
-
-.cards-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: var(--space-2);
-}
-
-/* ==========================================================================
-   6. ESTILOS DE TARJETA (CARD)
-   ========================================================================== */
-.card {
-  perspective: 1000px; /* Para el efecto 3D */
-  cursor: pointer;
-  min-height: 200px; /* Altura mínima para evitar colapso */
-}
-
-.card__inner {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  text-align: center;
-  transition: transform var(--transition-speed);
-  transform-style: preserve-3d;
-  border-radius: var(--border-radius);
-  box-shadow: var(--box-shadow);
-}
-
-.card--flipped .card__inner {
-  transform: rotateY(180deg);
-}
-
-.card__face {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  backface-visibility: hidden;
-  border-radius: var(--border-radius);
-  padding: var(--space-2);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: var(--space-1);
-}
-
-.card__face--front {
-  background-color: var(--color-card-front);
-  color: var(--color-primary);
-}
-
-.card__face--back {
-  background-color: var(--color-card-back);
-  color: var(--color-text);
-  transform: rotateY(180deg);
-  text-align: left;
-}
-
-.card__word {
-  font-size: var(--font-size-large);
-  font-weight: bold;
-}
-
-.card__definition {
-  font-size: var(--font-size-small);
-  text-align: left;
-  line-height: 1.4;
-}
-
-.card__image {
-  max-width: 100px; /* Tamaño de la imagen frontal */
-  height: auto;
-  border-radius: var(--border-radius);
-}
-
-/* Botones de acción en la tarjeta */
-.card__actions {
-  display: flex;
-  justify-content: center;
-  gap: var(--space-1);
-  margin-top: var(--space-1);
-}
-
-.card__button {
-  background-color: var(--color-accent);
-  color: var(--color-primary);
-  border: none;
-  padding: var(--space-1);
-  border-radius: var(--border-radius);
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-
-.card__button:hover, .card__button:focus {
-  background-color: var(--color-secondary);
-  color: var(--color-text-inverse);
-}
-
-/* ==========================================================================
-   7. MODAL
-   ========================================================================== */
-.modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.7);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 2000;
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.3s ease, visibility 0.3s ease;
-}
-
-.modal--visible {
-  opacity: 1;
-  visibility: visible;
-}
-
-.modal__content {
-  background-color: var(--color-card-front);
-  padding: var(--space-3);
-  border-radius: var(--border-radius);
-  box-shadow: var(--box-shadow);
-  position: relative;
-  max-width: 700px;
-  width: 90%;
-  max-height: 90vh;
-  overflow-y: auto;
-}
-
-.modal__close-button {
-  position: absolute;
-  top: var(--space-1);
-  right: var(--space-1);
-  background: transparent;
-  border: none;
-  font-size: 2rem;
-  color: var(--color-text);
-  cursor: pointer;
-}
-
-.modal__body .modal__image {
-  width: 100%;
-  height: auto;
-  margin-bottom: var(--space-2);
-  border-radius: var(--border-radius);
-}
-
-.modal__body .modal__word-es,
-.modal__body .modal__word-en {
-  font-size: var(--font-size-large);
-  font-weight: bold;
-}
-
-.modal__body .modal__definition-es,
-.modal__body .modal__definition-en {
-  margin-bottom: var(--space-2);
-  line-height: 1.5;
-}
-
-.modal__body .modal__actions {
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  gap: var(--space-1);
-}
-
-/* ==========================================================================
-   8. MEDIA QUERIES Y ACCESIBILIDAD
-   ========================================================================== */
-/* Para pantallas pequeñas */
-@media (max-width: 768px) {
-  .header__content {
-    flex-direction: column;
-    align-items: stretch;
-    text-align: center;
-  }
-
-  .header__nav {
-    justify-content: center;
-    margin-right: 0;
-    margin-top: var(--space-1);
-  }
-
-  .header__menu {
-    justify-content: center;
-    gap: var(--space-1);
-    flex-wrap: wrap;
-  }
-
-  .autocomplete-container {
-    width: 100%;
-    margin-top: var(--space-1);
-  }
-}
-
-/* Respetar la preferencia de movimiento reducido */
+/* prefers-reduced-motion */
 @media (prefers-reduced-motion: reduce) {
-  .card__inner,
-  .modal,
-  .header__link {
-    transition: none !important;
-  }
+    .card {
+        transition: none;
+    }
+    .modal {
+        transition: none;
+    }
 }
 
-/* Estilos para impresión (imprimir tarjetas) */
+/* Media Queries para Responsive Design */
+@media (max-width: 768px) {
+    .main-header {
+        flex-direction: column;
+        padding: 1rem;
+    }
+    .main-header__nav {
+        margin-top: 1rem;
+    }
+    .main-header__nav a {
+        margin: 0 0.5rem;
+    }
+    .main-header__search {
+        margin: 1rem 0;
+    }
+    .group-section__cards {
+        grid-template-columns: 1fr;
+    }
+    .section {
+        padding: 20px;
+    }
+}
+
+/* Impresión */
 @media print {
-  body {
-    background-color: #fff;
-    color: #000;
-  }
-
-  .header,
-  .content-section,
-  .modal {
-    display: none;
-  }
-
-  .subject-area {
-    display: block;
-  }
-
-  .card {
-    border: 1px solid #ccc;
-    page-break-inside: avoid;
-    margin-bottom: 10px;
-  }
-
-  .card__inner {
-    transform: none !important;
-  }
-  
-  .card__face--front,
-  .card__face--back {
-    position: static;
-    backface-visibility: visible;
-  }
-
-  .card__face--back {
-    transform: none;
-  }
+    body {
+        background: #fff;
+    }
+    .main-header, .materia__tabs, .card__controls, .modal {
+        display: none;
+    }
+    .card {
+        page-break-inside: avoid;
+        box-shadow: none;
+        border: 1px solid #ccc;
+    }
+    .card--flipped {
+        transform: rotateY(0deg);
+    }
 }
