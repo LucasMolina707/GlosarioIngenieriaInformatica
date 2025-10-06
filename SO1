@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Mi Libro Digital</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { background: #ccc; margin: 0; padding: 0; }
+        .flipbook-wrapper { display: flex; justify-content: center; align-items: center; height: 100vh; }
+        #flipbook { width: 800px; height: 600px; }
+        #flipbook .page { width: 400px; height: 600px; background-color: white; }
+        #flipbook .page img { width: 100%; height: 100%; object-fit: contain; }
+        /* Para pantallas pequeñas */
+        @media (max-width: 800px) {
+            #flipbook { width: 100%; height: auto; aspect-ratio: 4 / 3; }
+            #flipbook .page { width: 50%; height: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="flipbook-wrapper">
+    <div id="flipbook">
+        </div>
+</div>
+
+<script type="text/javascript" src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/turn.js/4.1.0/turn.min.js"></script> 
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        
+        // ---------- DATOS DE TU LIBRO ----------
+        var nombreBase = "1759736533579-56cd1495-ffd6-46db-91f2-746084bacc2a";
+        var numberOfPages = 261;
+        // -----------------------------------------
+
+        var flipbook = $("#flipbook");
+
+        for (var i = 1; i <= numberOfPages; i++) {
+            var nombreImagen = nombreBase + '_' + i + '.jpg';
+            var page = $('<div />').html('<img src="pages/' + nombreImagen + '" alt="Página ' + i + '">');
+            flipbook.append(page);
+        }
+
+        flipbook.turn({
+            display: 'double', // Muestra dos páginas a la vez, como un libro abierto
+            width: 800,
+            height: 600,
+            autoCenter: true,
+            elevation: 50,
+            gradients: true // Efecto de sombra al doblar la página
+        });
+
+        $(window).resize(function() {
+            var width = $(".flipbook-wrapper").width() * 0.9;
+            var height = width / 1.33; // Proporción aproximada de libro
+            flipbook.turn('size', width, height);
+        }).resize();
+    });
+</script>
+
+</body>
+</html>
