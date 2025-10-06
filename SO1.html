@@ -1,63 +1,243 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-    <title>Mi Libro Digital</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        body { background: #ccc; margin: 0; padding: 0; }
-        .flipbook-wrapper { display: flex; justify-content: center; align-items: center; height: 100vh; }
-        #flipbook { width: 800px; height: 600px; }
-        #flipbook .page { width: 400px; height: 600px; background-color: white; }
-        #flipbook .page img { width: 100%; height: 100%; object-fit: contain; }
-        /* Para pantallas pequeñas */
-        @media (max-width: 800px) {
-            #flipbook { width: 100%; height: auto; aspect-ratio: 4 / 3; }
-            #flipbook .page { width: 50%; height: 100%; }
-        }
-    </style>
+  <meta charset="utf-8" />
+  <title>Mi Libro Digital</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light dark" />
+  <style>
+    :root { --bg:#d9d9d9; --ink:#111; --paper:#fff; }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body { margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji"; background: var(--bg); color: var(--ink); }
+
+    /* Layout */
+    .app { display:grid; grid-template-rows:auto 1fr auto; height:100%; }
+    header { display:flex; gap:.75rem; align-items:center; justify-content:center; padding:.75rem 1rem; background:linear-gradient(180deg,#f7f7f7,#efefef); border-bottom:1px solid #e2e2e2; position:sticky; top:0; z-index:5; }
+    header .title { font-weight:700; letter-spacing:.2px; }
+    .stage { display:grid; place-items:center; padding:clamp(8px,2vw,20px); }
+    .flipbook-wrapper { position:relative; width: min(92vw, 1100px); aspect-ratio: 4 / 3; display:flex; align-items:center; justify-content:center; }
+
+    /* Flipbook */
+    #flipbook { width:100%; height:100%; box-shadow: 0 20px 40px rgba(0,0,0,.25); background: radial-gradient(120% 75% at 50% 50%, #fefefe 10%, #f7f7f7 60%, #eaeaea 100%); border-radius: 10px; overflow:hidden; }
+
+    /* Pages */
+    #flipbook .page { background: var(--paper); }
+    #flipbook .page img { width:100%; height:100%; object-fit:contain; display:block; user-select:none; -webkit-user-drag:none; }
+
+    /* turn.js frequently adds classes such as .turn-page and .hard */
+    #flipbook .turn-page { box-shadow: inset 0 0 0 1px rgba(0,0,0,.06); }
+    #flipbook .hard { background:#fafafa; box-shadow: inset 0 0 0 2px rgba(0,0,0,.1), 0 4px 18px rgba(0,0,0,.18); }
+
+    /* Edge shadows for realism */
+    #flipbook .shadow-left::before,
+    #flipbook .shadow-right::after { content:""; position:absolute; top:0; width:24px; height:100%; pointer-events:none; }
+    #flipbook .shadow-left::before { left:0; background:linear-gradient(90deg, rgba(0,0,0,.20), rgba(0,0,0,0)); }
+    #flipbook .shadow-right::after { right:0; background:linear-gradient(270deg, rgba(0,0,0,.20), rgba(0,0,0,0)); }
+
+    /* Controls */
+    .controls { position:absolute; inset:0; display:flex; align-items:center; justify-content:space-between; pointer-events:none; }
+    .btn { pointer-events:auto; border:none; background:rgba(255,255,255,.85); backdrop-filter: blur(6px); width:46px; height:46px; border-radius:999px; display:grid; place-items:center; cursor:pointer; box-shadow: 0 6px 16px rgba(0,0,0,.18); transition: transform .12s ease, box-shadow .12s ease; }
+    .btn:hover { transform: translateY(-1px); box-shadow: 0 10px 24px rgba(0,0,0,.22); }
+    .btn:active { transform: translateY(0); }
+    .btn svg { width:22px; height:22px; }
+
+    /* Page indicator */
+    .indicator { position:absolute; bottom:10px; left:50%; transform:translateX(-50%); background:rgba(255,255,255,.9); padding:6px 10px; border-radius:999px; font-size:.85rem; box-shadow: 0 4px 12px rgba(0,0,0,.15); }
+
+    /* Responsive tweaks */
+    @media (max-width: 900px) {
+      .flipbook-wrapper { width: min(96vw, 900px); }
+    }
+    @media (max-width: 720px) { /* switch to single page */
+      .flipbook-wrapper { aspect-ratio: 3 / 4; }
+    }
+  </style>
 </head>
 <body>
+  <div class="app">
+    <header>
+      <button class="btn" id="zoomOut" title="Alejar" aria-label="Alejar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg>
+      </button>
+      <div class="title">Mi Libro Digital</div>
+      <button class="btn" id="zoomIn" title="Acercar" aria-label="Acercar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="11" y1="8" x2="11" y2="14"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg>
+      </button>
+    </header>
 
-<div class="flipbook-wrapper">
-    <div id="flipbook">
+    <main class="stage">
+      <div class="flipbook-wrapper shadow-left shadow-right">
+        <div id="flipbook"></div>
+        <div class="controls">
+          <button class="btn" id="prevBtn" title="Página anterior" aria-label="Página anterior">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+          </button>
+          <button class="btn" id="nextBtn" title="Página siguiente" aria-label="Página siguiente">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          </button>
         </div>
-</div>
+        <div class="indicator" id="indicator">1 / 1</div>
+      </div>
+    </main>
 
-<script type="text/javascript" src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/turn.js/4.1.0/turn.min.js"></script> 
+    <footer style="text-align:center; font-size:.85rem; opacity:.8; padding:.5rem 1rem .9rem;">Arrastra desde una esquina, usa las flechas, o desliza para pasar de página.</footer>
+  </div>
 
-<script type="text/javascript">
-    $(document).ready(function(){
-        
-        // ---------- DATOS DE TU LIBRO ----------
-        var nombreBase = "1759736533579-56cd1495-ffd6-46db-91f2-746084bacc2a";
-        var numberOfPages = 261;
-        // -----------------------------------------
+  <!-- libs -->
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/turn.js/4.1.0/turn.min.js"></script>
 
-        var flipbook = $("#flipbook");
+  <script>
+    (function(){
+      // ---------- CONFIGURACIÓN DEL LIBRO ----------
+      const nombreBase = "1759736533579-56cd1495-ffd6-46db-91f2-746084bacc2a"; // base de archivo
+      const numberOfPages = 261; // total de páginas
+      const assetsPath = "pages/"; // carpeta de imágenes
+      const hardCover = true; // tapas rígidas para más realismo
+      const flipDuration = 900; // ms, velocidad de animación
+      // ----------------------------------------------
 
-        for (var i = 1; i <= numberOfPages; i++) {
-            var nombreImagen = nombreBase + '_' + i + '.jpg';
-            var page = $('<div />').html('<img src="pages/' + nombreImagen + '" alt="Página ' + i + '">');
-            flipbook.append(page);
+      const $flipbook = $("#flipbook");
+      const $wrapper = $(".flipbook-wrapper");
+      const $indicator = $("#indicator");
+
+      // Crear páginas (lazy con loading="lazy")
+      for (let i = 1; i <= numberOfPages; i++) {
+        const file = `${nombreBase}_${i}.jpg`;
+        const $page = $("<div class='page' />");
+        const $img = $(`<img alt='Página ${i}' loading='lazy'>`).attr("src", assetsPath + file);
+        $page.append($img);
+        $flipbook.append($page);
+      }
+
+      // Inicializar turn.js
+      function computeSize(){
+        // Mantiene relación según modo (doble o simple)
+        const narrow = window.matchMedia('(max-width: 720px)').matches;
+        const w = $wrapper.width();
+        const h = $wrapper.height();
+        // Con turn.js, el tamaño se da completo (ambas páginas si es display: 'double')
+        return { width: Math.round(w), height: Math.round(h) };
+      }
+
+      const size = computeSize();
+      $flipbook.turn({
+        display: window.matchMedia('(max-width: 720px)').matches ? 'single' : 'double',
+        width: size.width,
+        height: size.height,
+        autoCenter: true,
+        elevation: 250,            // curvatura/sombra más marcada
+        duration: flipDuration,    // velocidad de volteo
+        gradients: true,
+        acceleration: true,
+        page: 1,
+        when: {
+          turning: function(e, page){
+            updateIndicator(page);
+            // Pre-carga de adyacentes para animación suave
+            preload(page - 2);
+            preload(page - 1);
+            preload(page + 1);
+            preload(page + 2);
+          },
+          turned: function(e, page){
+            center();
+          },
+          end: function(){
+            center();
+          }
         }
+      });
 
-        flipbook.turn({
-            display: 'double', // Muestra dos páginas a la vez, como un libro abierto
-            width: 800,
-            height: 600,
-            autoCenter: true,
-            elevation: 50,
-            gradients: true // Efecto de sombra al doblar la página
+      // Tapas duras (opcional)
+      if (hardCover) {
+        $flipbook.turn("options", {
+          // Marcar la primera y última como duras
         });
+        // turn.js 4 no tiene API directa para hard, pero podemos simular con clases
+        const first = $flipbook.children().first();
+        const last = $flipbook.children().last();
+        first.addClass('hard');
+        last.addClass('hard');
+      }
 
-        $(window).resize(function() {
-            var width = $(".flipbook-wrapper").width() * 0.9;
-            var height = width / 1.33; // Proporción aproximada de libro
-            flipbook.turn('size', width, height);
-        }).resize();
-    });
-</script>
+      // Redimensionar en vivo y alternar modo simple/doble
+      function center(){ $flipbook.turn('center'); }
+      function updateLayout(){
+        const narrow = window.matchMedia('(max-width: 720px)').matches;
+        const mode = narrow ? 'single' : 'double';
+        const s = computeSize();
+        $flipbook.turn('size', s.width, s.height);
+        if ($flipbook.turn('display') !== mode) {
+          $flipbook.turn('display', mode);
+        }
+        center();
+        updateIndicator($flipbook.turn('page'));
+      }
+      $(window).on('resize orientationchange', updateLayout);
 
+      // Indicador
+      function updateIndicator(page){
+        const total = $flipbook.turn('pages') || numberOfPages;
+        $indicator.text(`${page} / ${total}`);
+      }
+      updateIndicator(1);
+
+      // Controles
+      $("#prevBtn").on('click', ()=> $flipbook.turn('previous'));
+      $("#nextBtn").on('click', ()=> $flipbook.turn('next'));
+
+      // Teclado
+      $(document).on('keydown', (e)=>{
+        if (e.key === 'ArrowLeft') $flipbook.turn('previous');
+        if (e.key === 'ArrowRight') $flipbook.turn('next');
+      });
+
+      // Deslizar con rueda (horizontal o vertical)
+      let wheelCooldown = false;
+      $wrapper.on('wheel', (e)=>{
+        if (wheelCooldown) return;
+        wheelCooldown = true; setTimeout(()=> wheelCooldown=false, 250);
+        const dx = Math.abs(e.originalEvent.deltaX) > Math.abs(e.originalEvent.deltaY)
+          ? e.originalEvent.deltaX : e.originalEvent.deltaY;
+        if (dx > 0) $flipbook.turn('next');
+        else $flipbook.turn('previous');
+      });
+
+      // Gestos táctiles (swipe)
+      let touchStartX = 0, touchStartY = 0;
+      $wrapper.on('touchstart', (e)=>{
+        const t = e.originalEvent.touches[0];
+        touchStartX = t.clientX; touchStartY = t.clientY;
+      });
+      $wrapper.on('touchend', (e)=>{
+        const t = e.originalEvent.changedTouches[0];
+        const dx = t.clientX - touchStartX; const dy = t.clientY - touchStartY;
+        if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 30) {
+          if (dx < 0) $flipbook.turn('next'); else $flipbook.turn('previous');
+        }
+      });
+
+      // Zoom básico (CSS scale)
+      let scale = 1;
+      const clamp = (v,min,max)=> Math.max(min, Math.min(max,v));
+      function applyZoom(){
+        $flipbook.css({ transform: `scale(${scale})`, transformOrigin:'center center' });
+      }
+      $("#zoomIn").on('click', ()=>{ scale = clamp(scale + 0.1, 1, 2); applyZoom(); });
+      $("#zoomOut").on('click', ()=>{ scale = clamp(scale - 0.1, 0.6, 2); applyZoom(); });
+
+      // Pre-carga de imágenes cercanas
+      function preload(i){
+        if (i < 1 || i > numberOfPages) return;
+        const img = new Image();
+        img.src = `${assetsPath}${nombreBase}_${i}.jpg`;
+      }
+
+      // Inicial layout
+      updateLayout();
+    })();
+  </script>
 </body>
 </html>
