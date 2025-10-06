@@ -2,112 +2,240 @@
 <html lang="es">
 <head>
   <meta charset="utf-8" />
-  <title>Flipbook - Mínimo funcional</title>
+  <title>Libro Interactivo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
-    body{margin:0;font-family:system-ui,Segoe UI,Roboto,Arial;background:#e9e9e9}
-    .wrap{max-width:980px;margin:24px auto;padding:12px}
-    .controls{display:flex;gap:8px;margin:8px 0 12px}
-    button{padding:8px 12px;border:1px solid #ccc;border-radius:8px;background:#fff;cursor:pointer}
-    #bookBox{width:900px;height:600px;margin:0 auto;box-shadow:0 18px 40px rgba(0,0,0,.22);background:#f6f6f6;border-radius:10px;overflow:hidden}
-    #flipbook{width:100%;height:100%}
-    #flipbook .page{background:#fff}
-    #flipbook .page img{width:100%;height:100%;object-fit:contain;display:block}
-    .hint{opacity:.7;margin-top:6px}
-    @media (max-width:940px){#bookBox{width:96vw;height:64vw;max-height:80vh}}
+    :root {
+      --amarillo: #f2c200;
+      --azul-800: #0b4b79;
+      --paper: #ffffff;
+    }
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background: #f5f7fb;
+      font-family: system-ui, sans-serif;
+    }
+    .bar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: #fff;
+      border-bottom: 1px solid rgba(0,0,0,0.1);
+      padding: 0.5rem 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .title {
+      font-weight: bold;
+      color: var(--azul-800);
+      letter-spacing: 0.3px;
+    }
+    .stage {
+      display: grid;
+      place-items: center;
+      height: calc(100% - 50px);
+      padding: 1rem;
+    }
+    .book-wrap {
+      width: min(94vw, 1080px);
+      aspect-ratio: 4/3;
+      position: relative;
+      perspective: 1600px;
+    }
+    @media(max-width: 760px) {
+      .book-wrap {
+        aspect-ratio: 3/4;
+      }
+    }
+    #flipbook {
+      width: 100%;
+      height: 100%;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #fff;
+      transform-style: preserve-3d;
+      backface-visibility: hidden;
+    }
+    #flipbook .page {
+      background: var(--paper);
+    }
+    #flipbook .page img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+    .controls {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      pointer-events: none;
+    }
+    .btn {
+      pointer-events: auto;
+      width: 48px;
+      height: 48px;
+      border: none;
+      border-radius: 50%;
+      background: #fff;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      transition: transform 0.1s;
+    }
+    .btn:hover {
+      transform: translateY(-2px);
+    }
+    .btn svg {
+      width: 24px;
+      height: 24px;
+      stroke: var(--azul-800);
+    }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <h1>Flipbook - Mínimo funcional</h1>
-    <div class="controls">
-      <button id="prevBtn">⟵ Anterior</button>
-      <button id="nextBtn">Siguiente ⟶</button>
-      <button id="peelBtn">Mostrar esquina</button>
-      <span id="status" class="hint"></span>
-    </div>
-    <div id="bookBox">
-      <div id="flipbook"></div>
-    </div>
-    <p class="hint">Consejo: arrastra desde una esquina, usa las flechas del teclado o los botones.</p>
+  <div class="bar">
+    <div class="title">Libro Interactivo</div>
   </div>
+
+  <main class="stage">
+    <div class="book-wrap">
+      <div id="flipbook"></div>
+      <div class="controls">
+        <button class="btn" id="prevBtn" title="Anterior" aria-label="Anterior">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="15 18 9 12 15 6"></polyline>
+          </svg>
+        </button>
+        <button class="btn" id="nextBtn" title="Siguiente" aria-label="Siguiente">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </main>
 
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/turn.js/3/turn.min.js"></script>
   <script>
     (function(){
-      const nombreBase = "1759736533579-56cd1495-ffd6-46db-91f2-746084bacc2a";
-      const numberOfPages = 8; // prueba con pocas páginas; luego cambia a 261
-      const assetsPath = "pages/";
+      const nombreBase   = "1759736533579-56cd1495-ffd6-46db-91f2-746084bacc2a";
+      const numberOfPages= 261;
+      const assetsPath   = "pages/";
+
       const $flip = $("#flipbook");
-      const $status = $("#status");
+      const $wrap = $(".book-wrap");
 
-      function log(msg){ console.log(msg); $status.text(msg); }
-
-      function build(){
+      function buildPages() {
         const frag = document.createDocumentFragment();
-        for(let i=1;i<=numberOfPages;i++){
+        for (let i = 1; i <= numberOfPages; i++) {
           const d = document.createElement("div");
           d.className = "page";
           const img = document.createElement("img");
-          img.alt = "Página " + i;
           img.loading = "lazy";
-          img.src = assetsPath + nombreBase + "_" + i + ".jpg";
+          img.alt = "Página " + i;
+          img.src = `${assetsPath}${nombreBase}_${i}.jpg`;
           d.appendChild(img);
           frag.appendChild(d);
         }
         $flip[0].appendChild(frag);
+        console.log("✅ Páginas creadas:", numberOfPages);
       }
 
-      function initTurn(){
-        if (!$.fn.turn) {
-          log("ERROR: $.fn.turn no está disponible. Revisa que turn.min.js cargó correctamente.");
+      function getSize() {
+        const rect = $wrap[0].getBoundingClientRect();
+        return { w: Math.round(rect.width), h: Math.round(rect.height) };
+      }
+
+      function initTurn() {
+        const { w, h } = getSize();
+        if (w <= 0 || h <= 0) {
+          console.warn("⚠️ Tamaño inválido para flipbook.");
           return;
         }
-        const box = document.getElementById("bookBox").getBoundingClientRect();
         $flip.turn({
-          display: box.width < 720 ? "single" : "double",
-          width: Math.round(box.width),
-          height: Math.round(box.height),
+          display: window.matchMedia("(max-width:760px)").matches ? "single" : "double",
+          width: w,
+          height: h,
           autoCenter: true,
-          duration: 1200,
+          duration: 800,
           elevation: 300,
           gradients: true,
           acceleration: true,
           when: {
-            turning: function(e, page){ log("Girando a página " + page); },
-            turned: function(e, page){ log("Página actual: " + page); $flip.turn("center"); }
+            turned: (_, page) => {
+              console.log("📖 Página actual:", page);
+              $flip.turn("center");
+            }
           }
         });
-        // Muestra “peel” y hace un flip de demostración
-        $flip.turn("peel","br");
-        setTimeout(()=> $flip.turn("next"), 1000);
+        $flip.turn("peel", "br");
       }
 
-      $(window).on("load", function(){
-        build();
-        initTurn();
-
-        $("#prevBtn").on("click", ()=> $flip.turn("previous"));
-        $("#nextBtn").on("click", ()=> $flip.turn("next"));
-        $("#peelBtn").on("click", ()=> $flip.turn("peel","br"));
-
-        $(document).on("keydown", (e)=>{
-          if (e.key === "ArrowLeft")  $flip.turn("previous");
+      function bindControls() {
+        $("#prevBtn").on("click", () => $flip.turn("previous"));
+        $("#nextBtn").on("click", () => $flip.turn("next"));
+        $(document).on("keydown", (e) => {
+          if (e.key === "ArrowLeft") $flip.turn("previous");
           if (e.key === "ArrowRight") $flip.turn("next");
         });
+      }
 
-        // Relayout en resize
-        $(window).on("resize", ()=>{
+      function bindResize() {
+        $(window).on("resize orientationchange", () => {
           if (!$flip.data("turn")) return;
-          const box = document.getElementById("bookBox").getBoundingClientRect();
-          $flip.turn("size", Math.round(box.width), Math.round(box.height));
-          const mode = box.width < 720 ? "single" : "double";
-          if ($flip.turn("display") !== mode) $flip.turn("display", mode);
+          const { w, h } = getSize();
+          $flip.turn("size", w, h);
+          const mode = window.matchMedia("(max-width:760px)").matches ? "single" : "double";
+          if ($flip.turn("display") !== mode) {
+            $flip.turn("display", mode);
+          }
           $flip.turn("center");
         });
+      }
+
+      function bindSwipe() {
+        let startX = null, startY = null;
+        $wrap[0].addEventListener("touchstart", e => {
+          const t = e.touches[0];
+          startX = t.clientX;
+          startY = t.clientY;
+        });
+        $wrap[0].addEventListener("touchend", e => {
+          if (startX === null || startY === null) return;
+          const t = e.changedTouches[0];
+          const dx = startX - t.clientX;
+          const dy = startY - t.clientY;
+          if (Math.abs(dx) > Math.abs(dy)) {
+            if (dx > 30) {
+              $flip.turn("next");
+            } else if (dx < -30) {
+              $flip.turn("previous");
+            }
+          }
+          startX = null;
+          startY = null;
+        });
+      }
+
+      $(window).on("load", () => {
+        buildPages();
+        initTurn();
+        bindControls();
+        bindResize();
+        bindSwipe();
       });
+
     })();
   </script>
 </body>
 </html>
+
